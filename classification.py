@@ -5,12 +5,12 @@ def filteration():
     selection_basket={}
     client=pymongo.MongoClient("mongodb://localhost:27017")
     print(client.list_database_names())
-    # select_database=input("Select Database : ")
-    select_database='local_database'
+    select_database=input("Select Database : ")
+#     select_database='local_database'
     db=client[select_database]
     print(db.list_collection_names())
-    # select_collection=input("Select Collection : ")
-    select_collection='database'
+    select_collection=input("Select Collection : ")
+#     select_collection='database'
     selected_collection=db[select_collection]
     def input_hierarchical_classification():
         # basket_order=['city','result','loan','education','name']
