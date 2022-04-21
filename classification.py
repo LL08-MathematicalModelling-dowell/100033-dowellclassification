@@ -54,7 +54,6 @@ def filteration():
             _filtered_data=tree_structure_collection.find({str(final_keys[i]):{"$nin":selection_basket[final_keys[i]]}}) 
             for _items in _filtered_data:
                 tree_structure_collection.delete_one(_items)        
-                # print(_items)
     def hierarchical_classification(final_keys,selection_basket):
         hierarchical_collection=db['hierarchical_collection']
         if(len(final_keys)==1):
