@@ -3,6 +3,7 @@ import pymongo
 def filteration():
     final_keys=[]
     selection_basket={}
+    probability={}
     client=pymongo.MongoClient("mongodb://localhost:27017")
     print(client.list_database_names())
     # select_database=input("Select Database : ")
@@ -14,6 +15,7 @@ def filteration():
     selected_collection=db[select_collection]
     def input_hierarchical_classification():
         # basket_order=['basket2','basket3','basket1','basket5','basket4']
+        # basket_order=['basket2','basket3','basket1']
         # basket_order=['city','result','loan','education','name']
         basket_order=['city','result','loan'] 
         selected_keys=[]
@@ -44,6 +46,41 @@ def filteration():
         print("Default Order: ",basket_order)
         print("Order Selected by User: ",final_keys)
         print(selection_basket) 
+        #Probability 
+        PV1=1
+        for i in selection_basket:
+          PV1=PV1*len(selection_basket[i])
+        probability['PV1']=PV1  
+        print("PV1: ",PV1)  
+        PV2=len(selection_basket[final_keys[0]])/PV1
+        probability['PV2']=PV2
+        print("PV2: ",PV2)
+        list_nr=[]
+        list_dr=[]
+        common_nr=set(selection_basket[final_keys[0]])
+        for i in range(1,len(final_keys)):
+            print(i,common_nr)
+            for j in (0,i):
+                set_a=set(common_nr)
+                set_b=set(selection_basket[final_keys[j]])
+                common_nr=set_a & set_b
+                print(common_nr)
+            print(common_nr,len(common_nr))
+            list_nr.append(len(common_nr))
+        common_dr=set(selection_basket[final_keys[0]])
+        for i in range(1,len(final_keys)):
+            print(i,common_dr)
+            for j in (0,i-1):
+                set_a=set(common_dr)
+                set_b=set(selection_basket[final_keys[j]])
+                common_dr=set_a & set_b
+                print(common_dr)
+            print(common_dr,len(common_dr))  
+            list_dr.append(len(common_dr))     
+        for i in range(0,len(list_nr)):
+            prob=list_nr[i]/list_dr[i]
+            probability["PV"+str(i+3)]=prob
+        print("Probability: ",probability)             
         return selection_basket,final_keys
     def tree_structure(final_keys,selection_basket):
         tree_structure_collection=db['tree_structure_collection']
@@ -101,6 +138,15 @@ def filteration():
             final_keys.append(x)
         print(final_keys)
         print(selection_basket)
+        PV1=1
+        for i in selection_basket:
+          PV1=PV1*len(selection_basket[i])
+        probability['PV1']=PV1  
+        print("PV1: ",PV1)  
+        for i in range(0,len(final_keys)):
+            prob=(len(selection_basket[final_keys[i]]))/PV1
+            probability["PV"+str(i+2)]=prob
+        print("Probability: ",probability)              
         non_hierarchical_collection=db['non_hierarchical_collection']
         if(len(final_keys)==1):
             filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]}})
