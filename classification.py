@@ -3,7 +3,6 @@ import pymongo
 def filteration():
     final_keys=[]
     selection_basket={}
-    probability={}
     client=pymongo.MongoClient("mongodb://localhost:27017")
     print(client.list_database_names())
     # select_database=input("Select Database : ")
@@ -46,14 +45,25 @@ def filteration():
         print("Default Order: ",basket_order)
         print("Order Selected by User: ",final_keys)
         print(selection_basket) 
-        #Probability 
+        return selection_basket,final_keys
+    def tree_structure(final_keys,selection_basket):
+        tree_structure_collection=db['tree_structure_collection']
+        filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]}})
+        for items in filtered_data:
+            tree_structure_collection.insert_one(items)
+        for i in range(1,len(final_keys)):
+            _filtered_data=tree_structure_collection.find({str(final_keys[i]):{"$nin":selection_basket[final_keys[i]]}}) 
+            for _items in _filtered_data:
+                tree_structure_collection.delete_one(_items)     
+        #Probability      
+        tree_structure_probability={}  
         PV1=1
         for i in selection_basket:
           PV1=PV1*len(selection_basket[i])
-        probability['PV1']=PV1  
+        tree_structure_probability['PV1']=PV1  
         print("PV1: ",PV1)  
         PV2=len(selection_basket[final_keys[0]])/PV1
-        probability['PV2']=PV2
+        tree_structure_probability['PV2']=PV2
         print("PV2: ",PV2)
         list_nr=[]
         list_dr=[]
@@ -79,18 +89,8 @@ def filteration():
             list_dr.append(len(common_dr))     
         for i in range(0,len(list_nr)):
             prob=list_nr[i]/list_dr[i]
-            probability["PV"+str(i+3)]=prob
-        print("Probability: ",probability)             
-        return selection_basket,final_keys
-    def tree_structure(final_keys,selection_basket):
-        tree_structure_collection=db['tree_structure_collection']
-        filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]}})
-        for items in filtered_data:
-            tree_structure_collection.insert_one(items)
-        for i in range(1,len(final_keys)):
-            _filtered_data=tree_structure_collection.find({str(final_keys[i]):{"$nin":selection_basket[final_keys[i]]}}) 
-            for _items in _filtered_data:
-                tree_structure_collection.delete_one(_items)        
+            tree_structure_probability["PV"+str(i+3)]=prob
+        print("Tree Structure Probability: ",tree_structure_probability)             
     def hierarchical_classification(final_keys,selection_basket):
         hierarchical_collection=db['hierarchical_collection']
         if(len(final_keys)==1):
@@ -113,6 +113,11 @@ def filteration():
             filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]},str(final_keys[1]):{"$in":selection_basket[final_keys[1]]},str(final_keys[2]):{"$in":selection_basket[final_keys[2]]},str(final_keys[3]):{"$in":selection_basket[final_keys[3]]},str(final_keys[4]):{"$in":selection_basket[final_keys[4]]}})
             for items in filtered_data:
                 hierarchical_collection.insert_one(items)
+        hie_probability=1
+        for i in final_keys:
+            hie_probability=hie_probability*(len(selection_basket[i])/1000)   
+        float_hie_probability= "%.15f" %hie_probability          
+        print("Hierarchical Probability: ",float_hie_probability)  
     def non_hierarchical_classification():
         basket_list=[]
         list_basket=basket_list
@@ -138,15 +143,6 @@ def filteration():
             final_keys.append(x)
         print(final_keys)
         print(selection_basket)
-        PV1=1
-        for i in selection_basket:
-          PV1=PV1*len(selection_basket[i])
-        probability['PV1']=PV1  
-        print("PV1: ",PV1)  
-        for i in range(0,len(final_keys)):
-            prob=(len(selection_basket[final_keys[i]]))/PV1
-            probability["PV"+str(i+2)]=prob
-        print("Probability: ",probability)              
         non_hierarchical_collection=db['non_hierarchical_collection']
         if(len(final_keys)==1):
             filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]}})
@@ -168,6 +164,10 @@ def filteration():
             filtered_data=selected_collection.find({str(final_keys[0]):{"$in":selection_basket[final_keys[0]]},str(final_keys[1]):{"$in":selection_basket[final_keys[1]]},str(final_keys[2]):{"$in":selection_basket[final_keys[2]]},str(final_keys[3]):{"$in":selection_basket[final_keys[3]]},str(final_keys[4]):{"$in":selection_basket[final_keys[4]]}})
             for items in filtered_data:
                 non_hierarchical_collection.insert_one(items)
+        non_hie_probability=0
+        for i in final_keys:
+            non_hie_probability=non_hie_probability+(len(selection_basket[i])/1000)    
+        print("Non Hierarchical Probability: ",non_hie_probability)                  
     classification_type=input("Type 'H' for Hierarchical or 'N' for Non Hierarchical or 'T' for Tree Structure: " )
     if(classification_type=='H'):
         input_hierarchical_classification()
