@@ -64,10 +64,15 @@ def classification():
             for items in filtered_data:
                 # hierarchical_collection.insert_one(items)
                 hierarchical_output.append(items)
-        classfied_data['classified_data']=hierarchical_output        
-        hie_probability=1
+        classfied_data['classified_data']=hierarchical_output       
+        total_dr=1
+        total_nr=1
         for i in final_keys:
-            hie_probability=hie_probability*(len(selection_basket[i])/1000)   
+            total_dr=total_dr*len(selected_collection.distinct(str(i)))
+        hie_probability= 1   
+        for i in final_keys:
+            total_nr=total_nr*len(selection_basket[i])
+        hie_probability=(total_nr/total_dr)    
         float_hie_probability= "%.15f" %hie_probability          
         classfied_data['probability']=float_hie_probability
 
@@ -99,11 +104,16 @@ def classification():
             for items in filtered_data:
                 # non_hierarchical_collection.insert_one(items)
                 non_hierarchical_output.append(items)
-        classfied_data["classified_data"]=non_hierarchical_output        
+        classfied_data["classified_data"]=non_hierarchical_output     
+        total_dr=0
+        total_nr=0
         non_hie_probability=0
         for i in final_keys:
-            non_hie_probability=non_hie_probability+(len(selection_basket[i])/1000)    
-        classfied_data['probability']=non_hie_probability   
+            total_dr=total_dr+len(selected_collection.distinct(str(i)))
+        for i in final_keys:
+            total_nr=total_nr+len(selection_basket[i])
+        non_hie_probability=(total_nr/total_dr)               
+        classfied_data['probability']=non_hie_probability 
 
     if(classification_type=='T'):
         tree_structure_collection=db['tree_structure_collection']
