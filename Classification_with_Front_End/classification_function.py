@@ -64,7 +64,7 @@ def classification(classification_input):
         }
 
         response = requests.post( url, headers=headers, json=payload)
-        # print(response.text)
+  
             
     filtered_data=[]
     data=database()
@@ -72,16 +72,19 @@ def classification(classification_input):
     selection_basket=classification_input['final_selection']
     total_length=classification_input['total_length']
     selected_length=classification_input['selected_length']
+    final_keys=[]
+    for i in selection_basket.keys():
+        final_keys.append(i)
+
     classified_data={
         'eventID':get_event_id(),
         'selection_dic':selection_basket,
         'classification_type':classification_type,
         'total_length':total_length,
-        'selected_length':selected_length
+        'selected_length':selected_length,
+        'final_keys':final_keys
         }
-    final_keys=[]
-    for i in selection_basket.keys():
-        final_keys.append(i)
+
 
     def common_output():
         if(len(final_keys)==1):
@@ -125,10 +128,10 @@ def classification(classification_input):
 
     if(classification_type=='T'):
         filtered_data=[i for i in data if i[final_keys[0]] in selection_basket[final_keys[0]]] 
-        for i in range(1,len(final_keys)):
-            for j in filtered_data:
-                if j[final_keys[i]] not in selection_basket[final_keys[i]]:
-                    filtered_data.remove(j)                      
+        for j in range(1,len(final_keys)):
+            items=[x for x in filtered_data if x[final_keys[j]] not in selection_basket[final_keys[j]]]
+            for k in items:
+                filtered_data.remove(k)   
         classified_data['classified_data']=filtered_data
 
         tree_structure_probability={}  
