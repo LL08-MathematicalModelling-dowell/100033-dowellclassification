@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+    let frontend_data= {{ frontend_data|safe }};
+    window.onload = function() {
+    {% for i in level %}
+    let type_{{i}} = document.getElementById("segmentation_type{{i}}");
+    let basis_{{i}} = document.getElementById("segmentation_basis{{i}}");
+    let choice_{{i}} = document.getElementById("segmentation_choice{{i}}");
+    for (let x in frontend_data) {
+        type_{{i}}.options[type_{{i}}.options.length] = new Option(x, x);
+    }
+    type_{{i}}.onchange = function() {
+        choice_{{i}}.length = 1;
+        basis_{{i}}.length = 1;
+        for (let y in frontend_data[this.value]) {
+        basis_{{i}}.options[basis_{{i}}.options.length] = new Option(y, y);
+        }
+    }
+    basis_{{i}}.onchange = function() {
+        choice_{{i}}.length = 1;
+        let z = frontend_data[type_{{i}}.value][this.value];
+        for (let j = 0; j < z.length; j++) {
+        choice_{{i}}.options[choice_{{i}}.options.length] = new Option(z[j], z[j]);
+        }
+    }
+    {% endfor %}
+    }       
+    </script>        
+    <title>Segementation Function</title>
+</head>
+<body>
+    <form action="/{{url}}" method="post">
+        <table align="center">
+            <tr>
+                <td>
+                    <h1>Segementation</h1>
+                </td>
+            </tr>
+            <tr>
+                <td>Select City Code</td>
+                <td>
+                    <select class="form-select" id="city_code" name="city_code" {{action}}>
+                        <option disabled selected value> {{cityMessage}} </option>
+                        {% for i in cities %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Select Number of Levels</td>
+                <td>
+                    <select class="form-select" id="number_of_levels" name="number_of_levels" {{action}} onchange="this.form.submit()">
+                        <option disabled selected value> {{levelMessage}} </option>
+                        {% for i in levels %}
+                        <option value="{{i}}">{{i}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <script>
+                    var s1 = document.getElementById("city_code"),
+                        s2 = document.getElementById("number_of_levels");
+                    s2.disabled = true;
+                    s1.addEventListener("change", e => s2.disabled = s1.value === "" ? true : false, false);
+                </script>
+            </tr>
+            {% if selected_level != 0 %}
+            {% for i in level %}
+            <tr>
+                <td>
+                    <h3>
+                        Level {{i}}
+                    </h3>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select class="form-select" id="segmentation_type{{i}}" name="segmentation_type{{i}}">
+                        <option disabled selected value> Select Segementation Type for Level {{i}} </option>
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" id="segmentation_basis{{i}}" name="segmentation_basis{{i}}">
+                        <option disabled selected value> Select Basis for Segementation at {{i}} </option>
+                    </select>
+                </td>
+                <td>
+                    <select class="form-select" id="segmentation_choice{{i}}" name="segmentation_choice{{i}}">
+                        <option disabled selected value> Select Values for Segementation at {{i}} </option>
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+                <script>
+                    {% for i in level %}
+                    var select{{i}} = document.getElementById("segmentation_type{{i}}"),
+                        select_{{i}} = document.getElementById("segmentation_basis{{i}}");
+                    select_{{i}}.disabled = true;
+                    select{{i}}.addEventListener("change", e => select_{{i}}.disabled = select{{i}}.value === "" ? true : false, false);
+                    {% endfor %}
+
+                    {% for i in level %}
+                    var selectNew{{i}} = document.getElementById("segmentation_basis{{i}}"),
+                        selectNew_{{i}} = document.getElementById("segmentation_choice{{i}}");
+                    selectNew_{{i}}.disabled = true;
+                    selectNew{{i}}.addEventListener("change", e => selectNew_{{i}}.disabled = selectNew{{i}}.value === "" ? true : false, false);
+                    {% endfor %}
+                </script>
+            <tr>
+                <td>
+                    <input type="submit" class="btn btn-outline-dark">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-outline-success" onclick="location.href='http://127.0.0.1:8000/';">Reset</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
