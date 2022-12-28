@@ -83,12 +83,12 @@ def permutationAPI(data):
     response = requests.post(url, json =data,headers=headers)
     return response.json()  
 
-def database():
+def databaseDb():
     data = databaseOne()
     return data
 
 def dbData():
-    database = database()
+    database = databaseDb()
     data = {}
     for i in database[0].keys():
         tempSet = set()
@@ -112,7 +112,7 @@ def classification(inserted_id):
     selected_length=dowellConnectionOutput['data'][0]['selectedLength']
     final_keys=dowellConnectionOutput['data'][0]['basketOrder']
     filtered_data=[]
-    data = database()
+    data = databaseDb()
     def common_output():
         if(len(final_keys)==1):
             filtered_data=[i for i in data if (i[final_keys[0]] in selection_basket[final_keys[0]])]
