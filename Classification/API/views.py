@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 import requests
 from math import factorial
-from API.test_database import databaseOne
+from API.test_database import databaseOne, databaseTwo
 
 def get_event_id():
     from datetime import datetime
@@ -83,8 +83,12 @@ def permutationAPI(data):
     response = requests.post(url, json =data,headers=headers)
     return response.json()  
 
+def database():
+    data = databaseOne()
+    return data
+
 def dbData():
-    database = databaseOne()
+    database = database()
     data = {}
     for i in database[0].keys():
         tempSet = set()
@@ -93,36 +97,35 @@ def dbData():
         data[i] = list(tempSet)
     return data
 
-def classification(classification_input):
+def classification(inserted_id):
+    dowellConnectionOutput = dowellConnection({
+    'command' : 'fetch',
+    'update_field' : None,
+    'field':{
+        '_id':inserted_id,
+        },
+    })
+    classified_data = {}
+    classification_type=dowellConnectionOutput['data'][0]['classificationType']
+    selection_basket=dowellConnectionOutput['data'][0]['finalSelection']
+    total_length=dowellConnectionOutput['data'][0]['totalLength']
+    selected_length=dowellConnectionOutput['data'][0]['selectedLength']
+    final_keys=dowellConnectionOutput['data'][0]['basketOrder']
     filtered_data=[]
-    data=database()
-    classification_type=classification_input['classification_type']
-    selection_basket=classification_input['final_selection']
-    total_length=classification_input['total_length']
-    selected_length=classification_input['selected_length']
-    final_keys=[]
-    for i in selection_basket.keys():
-        final_keys.append(i)
-
-    classified_data={
-        'eventID':get_event_id(),
-        'selection_dictionary':selection_basket,
-        'classification_type':classification_type,
-        'total_length':total_length,
-        'selected_length':selected_length,
-        'final_keys':final_keys
-        }
+    data = database()
     def common_output():
         if(len(final_keys)==1):
             filtered_data=[i for i in data if (i[final_keys[0]] in selection_basket[final_keys[0]])]
-        if(len(final_keys)==2):
+        elif(len(final_keys)==2):
             filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]))]            
-        if(len(final_keys)==3):
+        elif(len(final_keys)==3):
             filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]))]            
-        if(len(final_keys)==4):
+        elif(len(final_keys)==4):
             filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
-        if(len(final_keys)==5):
+        elif(len(final_keys)==5):
             filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
+        else:
+            filtered_data = []
         return filtered_data
                     
     if(classification_type=='H'):
@@ -190,8 +193,24 @@ def classification(classification_input):
                 prob=0
             tree_structure_probability["PV"+str(i+3)]=prob
             classified_data['probability']=tree_structure_probability  
-    dowell_connection(classified_data)
-    return classified_data
+    finalOutput = []
+    for i in selection_basket.keys():
+        finalOutput.append(selection_basket[i])
+
+    dowellConnection({
+        'command':'update',
+        'field':{       
+            '_id':inserted_id,
+        },
+        'update_field':{
+            'classifiedData' : classified_data['classified_data'],
+            'probability' : classified_data['probability'],
+            'finalOutput' : finalOutput
+        }
+    })
+    dowellConnectionOutput['data'][0]['probability'] = classified_data['probability'] 
+    dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
+    return dowellConnectionOutput['data'][0]
 
 @csrf_exempt
 def classificationType(request):
@@ -203,49 +222,14 @@ def classificationType(request):
             'classificationType':classificationType,
             'numberOfLevels':numberOfLevels,
             'eventId':get_event_id(),
+            'permutationsVariables':[],
         }
-        if(classificationType=='N'):
-            data = dbData()
-            basket = data.keys()
-            baskets = []
-            for i in basket:
-                baskets.append(i)
-            output_data['permutationsVariables'] = []
-            callDowellConnection = dowellConnection({
+        callDowellConnection = dowellConnection({
                 'command':'insert',
                 'field':output_data,
                 'update_field':None,
                 })
-            output_data['baskets'] = baskets
-            output_data['inserted_id'] = callDowellConnection['inserted_id']
-            output_data['message'] = f'Select {numberOfLevels} Baskets'
-            return JsonResponse(output_data)
-        elif(classificationType=='H' or classificationType=='T'):
-            inserted_id = request_data['inserted_id']
-            dowellConnectionOutput = dowellConnection({
-                'command' : 'fetch',
-                'update_field' : None,
-                'field':{
-                    '_id':inserted_id,
-                },
-            })
-            baskets = []
-            if(dowellConnectionOutput['isSuccess'] == True):
-                baskets = dowellConnectionOutput['data'][0]['permutationsVariables'][0:numberOfLevels]
-            else:
-                return JsonResponse({"message":f" inserted_id : {inserted_id} is not present in the databse "})
-            output_data['baskets']= baskets
-            callDowellConnection = dowellConnection({
-                'command':'insert',
-                'field':output_data,
-                'update_field':None,
-                })
-            output_data['inserted_id'] = callDowellConnection['inserted_id']
-            output_data['message'] = f'Select items from the baskets'
-            output_data['baskets'] = baskets
-            return JsonResponse(output_data)
-        else:
-            return JsonResponse({'message':'Select a valid Classification Type'})
+        return JsonResponse({ 'inserted_id' : callDowellConnection['inserted_id']})
     else:
         return HttpResponse("Method Not Allowed")   
 
@@ -256,51 +240,63 @@ def basketSelection(request):
         selectedBasket = request_data['selectedBasket'] 
         baskets = request_data['baskets']
         inserted_id = request_data['inserted_id']
-        dowellConnectionOutput = dowellConnection({
-            'command' : 'fetch',
-            'update_field' : None,
-            'field':{
-                '_id':inserted_id,
-            },
-        })
-        permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
-        numberOfLevels = dowellConnectionOutput['data'][0]['numberOfLevels']
-        baskets.remove(selectedBasket)
-        if(len(permutationsVariables) < numberOfLevels):
-            if(len(permutationsVariables) == 0):
-                dowellConnection({
-                    'command':'update',
-                    'field':{
-                        '_id':inserted_id,
-                    },
-                    'update_field':{
-                        'permutationsVariables': [selectedBasket],
-                        'n': len(baskets),
-                        'r': numberOfLevels,
-                        'numberOfPermutations': int(factorial(len(baskets))/factorial(len(baskets)-numberOfLevels)),
-                    }
-                })
-                return JsonResponse({
-                    'message':f'Current order of baskets is [{selectedBasket}], select the remaining {numberOfLevels-(len(permutationsVariables)+1)} baskets',
-                    'inserted_id':inserted_id,
-                    'baskets':baskets,
-                })
-            else:
-                output_data = permutationAPI({
-                    "inserted_id": inserted_id,
-                    "nextVariable": selectedBasket,
-                    "selectedPermutation" : None,
-                    "command":"findPermutation",
-                })
-                permutations = output_data['permutationsVariables']
-                return JsonResponse({
-                    'permutations' : permutations,
-                    'inserted_id' : inserted_id,
-                    'message' : f'Select from the given permutations : {permutations} and save it, and select the remaining {numberOfLevels-(len(permutationsVariables)+1)} baskets' if(numberOfLevels-(len(permutationsVariables)+1) > 0) else 'Select items from the baskets',
-                    'baskets' : baskets if(numberOfLevels-(len(permutationsVariables)+1) > 0) else f'{numberOfLevels} baskets already selected' ,
-                })
+        if(len(baskets) == 0):
+            data = dbData()
+            basket = data.keys()
+            baskets = []
+            for i in basket:
+                baskets.append(i)
+            return JsonResponse({
+                'baskets':baskets,
+                'inserted_id':inserted_id,
+                'message':f'Select first basket from the given baskets {baskets}',
+            })
         else:
-            return JsonResponse({'message':f'{numberOfLevels} baskets are already selected'})
+            dowellConnectionOutput = dowellConnection({
+                'command' : 'fetch',
+                'update_field' : None,
+                'field':{
+                    '_id':inserted_id,
+                },
+            })
+            permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
+            numberOfLevels = dowellConnectionOutput['data'][0]['numberOfLevels']
+            baskets.remove(selectedBasket)
+            if(len(permutationsVariables) < numberOfLevels):
+                if(len(permutationsVariables) == 0):
+                    dowellConnection({
+                        'command':'update',
+                        'field':{       
+                            '_id':inserted_id,
+                        },
+                        'update_field':{
+                            'permutationsVariables': [selectedBasket],
+                            'n': len(baskets),
+                            'r': numberOfLevels,
+                            'numberOfPermutations': int(factorial(len(baskets))/factorial(len(baskets)-numberOfLevels)),
+                        }
+                    })
+                    return JsonResponse({
+                        'message':f'Current order of baskets is [{selectedBasket}], select the remaining {numberOfLevels-(len(permutationsVariables)+1)} baskets',
+                        'inserted_id':inserted_id,
+                        'baskets':baskets,
+                    })
+                else:
+                    output_data = permutationAPI({
+                        "inserted_id": inserted_id,
+                        "nextVariable": selectedBasket,
+                        "selectedPermutation" : None,
+                        "command":"findPermutation",
+                    })
+                    permutations = output_data['permutationsVariables']
+                    return JsonResponse({
+                        'permutations' : permutations,
+                        'inserted_id' : inserted_id,
+                        'message' : f'Select from the given permutations : {permutations} and save it, and select the remaining {numberOfLevels-(len(permutationsVariables)+1)} baskets',
+                        'baskets' : baskets if(numberOfLevels-(len(permutationsVariables)+1) > 0) else f'{numberOfLevels} baskets already selected' ,
+                    })
+            else:
+                return JsonResponse({'message':f'{numberOfLevels} baskets are already selected'})
     else:
         return HttpResponse("Method Not Allowed")   
 
@@ -308,6 +304,191 @@ def basketSelection(request):
 def itemSelection(request):
     if(request.method=="POST"):
         request_data=json.loads(request.body)
+        inserted_id = request_data['inserted_id']
+        selectedItem = request_data['selectedItem']
+        status = request_data['status']
+        basket = request_data['basket']
+        if(basket == ""):
+            dowellConnectionOutput = dowellConnection({
+                'command' : 'fetch',
+                'update_field' : None,
+                'field':{
+                    '_id':inserted_id,
+                },
+            })
+            basketOrder = dowellConnectionOutput['data'][0]['permutationsVariables']
+            items = {}
+            totalLength = {}
+            data = dbData()
+            for i in basketOrder:
+                items[i] = data[i]
+                totalLength[i] = len(data[i])
+            dowellConnection({
+                'command':'update',
+                'field':{       
+                    '_id':inserted_id,
+                },
+                'update_field':{ 
+                    'basketOrder': basketOrder,
+                    'remainingBaskets':basketOrder,
+                    'totalLength': totalLength,
+                    'finalSelection':{},
+                    'currentBasket': basketOrder[0],
+                    'permutationsVariables':[],
+                    'items': items,
+                    'r' : 1000,
+                    'n' : 1000,
+                }
+            })
+            return JsonResponse({
+                'items':items[basketOrder[0]],
+                'basket': basketOrder[0],
+                'message': f"Select first item from the basket {basketOrder[0]} ",
+                'inserted_id': inserted_id
+            })
+        else:
+            dowellConnectionOutput = dowellConnection({
+                'command' : 'fetch',
+                'update_field' : None,
+                'field':{
+                    '_id':inserted_id,
+                },
+            })
+            remainingBaskets = dowellConnectionOutput['data'][0]['remainingBaskets']
+            currentBasket = dowellConnectionOutput['data'][0]['currentBasket']
+            items = dowellConnectionOutput['data'][0]['items']
+            if(status == True):
+                if (currentBasket == basket):
+                    permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
+                    if(len(permutationsVariables) == 0):
+                        currentBasketItems = items[basket]
+                        currentBasketItems.remove(selectedItem)
+                        items[basket] = currentBasketItems
+                        dowellConnection({
+                            'command':'update',
+                            'field':{       
+                                '_id':inserted_id,
+                            },
+                            'update_field':{
+                                'permutationsVariables' : [selectedItem],
+                                'items' : items
+                            }
+                        })
+                        outputData = {}
+                        if(len(remainingBaskets) == 1):
+                            outputData = {
+                                'message':f'Item {selectedItem} selected successfully, select next item from the same basket {basket}',
+                                'currentBasket': basket,
+                                'currentBasketItems':currentBasketItems,
+                            }
+                        else:
+                            outputData = {
+                                'message':f'Item {selectedItem} selected successfully, select next item from the same basket {basket} or from the next basket {remainingBaskets[1]}',
+                                'currentBasket': basket,
+                                'nextBasket':remainingBaskets[1],
+                                'currentBasketItems':currentBasketItems,
+                                'nextBasketItems': items[remainingBaskets[1]]
+                            }
+                        return JsonResponse(outputData)
+                    else:
+                        output_data = permutationAPI({
+                            "inserted_id": inserted_id,
+                            "nextVariable": selectedItem,
+                            "selectedPermutation" : None,
+                            "command":"findPermutation",
+                        })
+                        permutations = output_data['permutationsVariables']
+                        currentBasketItems = items[basket]
+                        currentBasketItems.remove(selectedItem)
+                        items[basket] = currentBasketItems
+                        dowellConnection({
+                            'command':'update',
+                            'field':{       
+                                '_id':inserted_id,
+                            },
+                            'update_field':{
+                                'items' : items
+                            }
+                        })
+                        if(len(remainingBaskets) == 1):
+                            outputData = {
+                                'permutations':permutations,
+                                'message': f'Select and save from the given permuations and select next item from the same basket {basket}',
+                                'currentBasket': basket,
+                                'currentBasketItems':currentBasketItems,
+                            }
+                        else:
+                            outputData = {
+                                'permutations':permutations,
+                                'message': f'Select and save from the given permuations and select next item from the same basket {basket} or from the next basket {remainingBaskets[1]}',
+                                'currentBasket': basket,
+                                'nextBasket':remainingBaskets[1],
+                                'currentBasketItems':currentBasketItems,
+                                'nextBasketItems': items[remainingBaskets[1]]
+                            }
+                        return JsonResponse(outputData)
+
+                else:
+                    if(len(remainingBaskets) == 1):
+                        remainingBaskets = remainingBaskets
+                    else:
+                        remainingBaskets.remove(currentBasket)
+                    finalSelection = dowellConnectionOutput['data'][0]['finalSelection']
+                    permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
+                    finalSelection[currentBasket] = permutationsVariables
+                    currentBasketItems = items[basket]
+                    currentBasketItems.remove(selectedItem)
+                    items[basket] = currentBasketItems
+                    dowellConnection({
+                        'command':'update',
+                        'field':{       
+                            '_id':inserted_id,
+                        },
+                        'update_field':{
+                            'finalSelection':finalSelection,
+                            'permutationsVariables':[selectedItem],
+                            'currentBasket':basket,
+                            'remainingBaskets' : remainingBaskets,
+                            'items' : items,
+                        }
+                    })
+                    outputData = {}
+                    if(len(remainingBaskets) == 1):
+                        outputData = {
+                            'message':f'Item {selectedItem} selected successfully, select next item from the same basket {basket}',
+                            'currentBasket': basket,
+                            'currentBasketItems':currentBasketItems,
+                        }
+                    else:
+                        outputData = {
+                            'message':f'Item {selectedItem} selected successfully, select next item from the same basket {basket} or from the next basket {remainingBaskets[0]}',
+                            'currentBasket': basket,
+                            'nextBasket':remainingBaskets[0],
+                            'currentBasketItems':currentBasketItems,
+                            'nextBasketItems': items[remainingBaskets[0]]
+                        }
+                    return JsonResponse(outputData)
+            else:
+                finalSelection = dowellConnectionOutput['data'][0]['finalSelection']
+                permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
+                finalSelection[currentBasket] = permutationsVariables
+                selectedLength = {}
+                for i in finalSelection.keys():
+                    selectedLength[i] = len(finalSelection[i])
+                dowellConnection({
+                    'command':'update',
+                    'field':{       
+                        '_id':inserted_id,
+                    },
+                    'update_field':{
+                        'finalSelection':finalSelection,
+                        'permutationsVariables':[],
+                        'selectedLength':selectedLength,
+                        'currentBasket': '',
+                        'remainingBaskets':[]
+                    }
+                })
+                return JsonResponse({'message': 'Items from all required baskets are successfully selected.'})
     else:
         return HttpResponse("Method Not Allowed")   
 
@@ -315,48 +496,7 @@ def itemSelection(request):
 def classificationAPI(request):
     if (request.method=="POST"):
         request_data=json.loads(request.body)
-        output_data = classification(request_data)
+        output_data = classification(request_data['inserted_id'])
         return JsonResponse(output_data)
     else:
         return HttpResponse("Method Not Allowed")   
-
-'''
-Classification API
-1st Route
-Request 
-{
-    "numberOfLevels": 3, 
-    "classificationType": "N",
-    "inserted_id" : None,
-}
-          save both in the database using dowellConnection with eventId
-Response -  if classificationType = Hie or Tree-Strucuture
-                basket order for item     selection 
-            if classificationType = Non-Hie
-                baskets for selection
-            eventId, inserted_id
-2nd Route 
-Request 
-{
-    "selectedBasket":,
-    "baskets":,
-    "inserted_id":,
-}
-
-3rd Route
-
-Step 1  : Call 1st Route
-for i in range numberOfLevels
-{
-Step 2  : Call 2nd Route
-Step 3 : Save the selected permutation
-}
-
-classification_input
-{
-        'classification_type':classification_type,
-        'total_length':total_length,
-        'selected_length':selected_length,
-        'final_selection':final_selection,
-    }   
-'''
