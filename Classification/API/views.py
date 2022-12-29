@@ -210,6 +210,13 @@ def classification(inserted_id):
     })
     dowellConnectionOutput['data'][0]['probability'] = classified_data['probability'] 
     dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
+    dowellConnectionOutput['data'][0].pop('permutationsVariables')
+    dowellConnectionOutput['data'][0].pop('r')
+    dowellConnectionOutput['data'][0].pop('n')
+    dowellConnectionOutput['data'][0].pop('numberOfPermutations')
+    dowellConnectionOutput['data'][0].pop('items')
+    dowellConnectionOutput['data'][0].pop('remainingBaskets')
+    dowellConnectionOutput['data'][0].pop('currentBasket')
     return dowellConnectionOutput['data'][0]
 
 @csrf_exempt
