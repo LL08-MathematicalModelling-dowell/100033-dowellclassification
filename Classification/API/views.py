@@ -208,6 +208,7 @@ def classification(inserted_id):
             'finalOutput' : finalOutput
         }
     })
+    dowellConnectionOutput['data'][0]['probability'] = classified_data['classified_data']
     dowellConnectionOutput['data'][0]['probability'] = classified_data['probability'] 
     dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
     dowellConnectionOutput['data'][0].pop('permutationsVariables')
