@@ -4,7 +4,7 @@
 #### 1. Classification Type
 #### URL
 ```py
-http://127.0.0.1:8000/type/
+http://100061.pythonanywhere.com/type/
 ```
 #### Request
 ```py
@@ -22,7 +22,7 @@ http://127.0.0.1:8000/type/
 #### 2. Basket Selection
 #### URL
 ```py
-http://127.0.0.1:8000/basket/
+http://100061.pythonanywhere.com/basket/
 ```
 #### For First API Call for Basket Selection
 #### Request
@@ -135,7 +135,7 @@ https://100050.pythonanywhere.com/permutationapi/api/
 #### 4. Item Selection
 #### URL
 ```py
-http://127.0.0.1:8000/item/
+http://100061.pythonanywhere.com/item/
 ```
 #### For First API Call for Item Selection
 #### Request
@@ -267,7 +267,7 @@ https://100050.pythonanywhere.com/permutationapi/api/
 #### 6. Selecting Items from Next Basket
 #### URL
 ```py
-http://127.0.0.1:8000/item/
+http://100061.pythonanywhere.com/item/
 ```
 #### Request
 ```json
@@ -312,10 +312,10 @@ http://127.0.0.1:8000/item/
   "message": "Items from all required baskets are successfully selected."
 }
 ```
-#### 5. Calling Classification Function
+#### 8. Calling Classification Function
 #### URL
 ```py
-http://127.0.0.1:8000/api/
+http://100061.pythonanywhere.com/api/
 ```
 #### Request
 ```json
