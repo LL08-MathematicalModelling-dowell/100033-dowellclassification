@@ -5,7 +5,6 @@ from django.http import JsonResponse
 import json
 import requests
 from math import factorial
-from API.test_database import databaseOne, databaseTwo
 
 def get_event_id():
     from datetime import datetime
@@ -83,18 +82,23 @@ def permutationAPI(data):
     response = requests.post(url, json =data,headers=headers)
     return response.json()  
 
-def databaseDb():
-    data = databaseOne()
-    return data
-
-def dbData():
-    database = databaseDb()
-    data = {}
-    for i in database[0].keys():
-        tempSet = set()
-        for j in database:
-            tempSet.add(j[i])
-        data[i] = list(tempSet)
+def dbData(inserted_id):
+    dowellConnectionOutput = dowellConnection({
+        'command' : 'fetch',
+        'update_field' : None,
+        'field':{
+            '_id':inserted_id,
+        },
+    })
+    dbInsertedId = dowellConnectionOutput['data'][0]['dbInsertedId']
+    allBasketsData = dowellConnection({
+        'command' : 'fetch',
+        'update_field' : None,
+        'field':{
+            '_id':dbInsertedId,
+        },
+    })
+    data = allBasketsData['data'][0]['allBaskets']
     return data
 
 def classification(inserted_id):
@@ -111,88 +115,90 @@ def classification(inserted_id):
     total_length=dowellConnectionOutput['data'][0]['totalLength']
     selected_length=dowellConnectionOutput['data'][0]['selectedLength']
     final_keys=dowellConnectionOutput['data'][0]['basketOrder']
-    filtered_data=[]
-    data = databaseDb()
-    def common_output():
-        if(len(final_keys)==1):
-            filtered_data=[i for i in data if (i[final_keys[0]] in selection_basket[final_keys[0]])]
-        elif(len(final_keys)==2):
-            filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]))]            
-        elif(len(final_keys)==3):
-            filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]))]            
-        elif(len(final_keys)==4):
-            filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
-        elif(len(final_keys)==5):
-            filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
-        else:
-            filtered_data = []
-        return filtered_data
+
+    # filtered_data=[]
+    # data = databaseDb()
+    # def common_output():
+    #     if(len(final_keys)==1):
+    #         filtered_data=[i for i in data if (i[final_keys[0]] in selection_basket[final_keys[0]])]
+    #     elif(len(final_keys)==2):
+    #         filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]))]            
+    #     elif(len(final_keys)==3):
+    #         filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]))]            
+    #     elif(len(final_keys)==4):
+    #         filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
+    #     elif(len(final_keys)==5):
+    #         filtered_data=[i for i in data if ((i[final_keys[0]] in selection_basket[final_keys[0]]) and (i[final_keys[1]] in selection_basket[final_keys[1]]) and (i[final_keys[2]] in selection_basket[final_keys[2]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]) and (i[final_keys[3]] in selection_basket[final_keys[3]]))]            
+    #     else:
+    #         filtered_data = []
+    #     return filtered_data
                     
-    if(classification_type=='H'):
-        filtered_data=common_output()
-        classified_data['classified_data']=filtered_data
-        total_dr=1
-        total_nr=1
-        for i in final_keys:
-            total_dr=total_dr*(total_length[i])
-        hie_probability= 1   
-        for i in final_keys:
-            total_nr=total_nr*(selected_length[i])
-        hie_probability=(total_nr/total_dr)    
-        float_hie_probability= "%.15f" %hie_probability          
-        classified_data['probability']=float_hie_probability
+    # if(classification_type=='H'):
+    #     filtered_data=common_output()
+    #     classified_data['classified_data']=filtered_data
+    #     total_dr=1
+    #     total_nr=1
+    #     for i in final_keys:
+    #         total_dr=total_dr*(total_length[i])
+    #     hie_probability= 1   
+    #     for i in final_keys:
+    #         total_nr=total_nr*(selected_length[i])
+    #     hie_probability=(total_nr/total_dr)    
+    #     float_hie_probability= "%.15f" %hie_probability          
+    #     classified_data['probability']=float_hie_probability
 
-    elif(classification_type=='N'):
-        filtered_data=common_output()
-        classified_data['classified_data']=filtered_data  
-        total_dr=0
-        total_nr=0
-        non_hie_probability=0
-        for i in final_keys:
-            total_dr=total_dr+(total_length[i])
-        for i in final_keys:
-            total_nr=total_nr+(selected_length[i])
-        non_hie_probability=(total_nr/total_dr)               
-        classified_data['probability']=non_hie_probability   
+    # elif(classification_type=='N'):
+    #     filtered_data=common_output()
+    #     classified_data['classified_data']=filtered_data  
+    #     total_dr=0
+    #     total_nr=0
+    #     non_hie_probability=0
+    #     for i in final_keys:
+    #         total_dr=total_dr+(total_length[i])
+    #     for i in final_keys:
+    #         total_nr=total_nr+(selected_length[i])
+    #     non_hie_probability=(total_nr/total_dr)               
+    #     classified_data['probability']=non_hie_probability   
 
-    elif(classification_type=='T'):
-        filtered_data=[i for i in data if i[final_keys[0]] in selection_basket[final_keys[0]]] 
-        for j in range(1,len(final_keys)):
-            items=[x for x in filtered_data if x[final_keys[j]] not in selection_basket[final_keys[j]]]
-            for k in items:
-                filtered_data.remove(k)   
-        classified_data['classified_data']=filtered_data
+    # elif(classification_type=='T'):
+    #     filtered_data=[i for i in data if i[final_keys[0]] in selection_basket[final_keys[0]]] 
+    #     for j in range(1,len(final_keys)):
+    #         items=[x for x in filtered_data if x[final_keys[j]] not in selection_basket[final_keys[j]]]
+    #         for k in items:
+    #             filtered_data.remove(k)   
+    #     classified_data['classified_data']=filtered_data
 
-        tree_structure_probability={}  
-        PV1=1
-        for i in selection_basket:
-          PV1=PV1*len(selection_basket[i])
-        tree_structure_probability['PV1']=PV1  
-        PV2=len(selection_basket[final_keys[0]])/PV1
-        tree_structure_probability['PV2']=PV2
-        list_nr=[]
-        list_dr=[]
-        common_nr=set(selection_basket[final_keys[0]])
-        for i in range(1,len(final_keys)):
-            for j in (0,i):
-                set_a=set(common_nr)
-                set_b=set(selection_basket[final_keys[j]])
-                common_nr=set_a & set_b
-            list_nr.append(len(common_nr))
-        common_dr=set(selection_basket[final_keys[0]])
-        for i in range(1,len(final_keys)):
-            for j in (0,i-1):
-                set_a=set(common_dr)
-                set_b=set(selection_basket[final_keys[j]])
-                common_dr=set_a & set_b
-            list_dr.append(len(common_dr))   
-        for i in range(0,len(list_nr)):
-            if list_nr[i]!=0 and list_dr[i]!=0:
-                prob=list_nr[i]/list_dr[i]
-            else:
-                prob=0
-            tree_structure_probability["PV"+str(i+3)]=prob
-            classified_data['probability']=tree_structure_probability  
+    #     tree_structure_probability={}  
+    #     PV1=1
+    #     for i in selection_basket:
+    #       PV1=PV1*len(selection_basket[i])
+    #     tree_structure_probability['PV1']=PV1  
+    #     PV2=len(selection_basket[final_keys[0]])/PV1
+    #     tree_structure_probability['PV2']=PV2
+    #     list_nr=[]
+    #     list_dr=[]
+    #     common_nr=set(selection_basket[final_keys[0]])
+    #     for i in range(1,len(final_keys)):
+    #         for j in (0,i):
+    #             set_a=set(common_nr)
+    #             set_b=set(selection_basket[final_keys[j]])
+    #             common_nr=set_a & set_b
+    #         list_nr.append(len(common_nr))
+    #     common_dr=set(selection_basket[final_keys[0]])
+    #     for i in range(1,len(final_keys)):
+    #         for j in (0,i-1):
+    #             set_a=set(common_dr)
+    #             set_b=set(selection_basket[final_keys[j]])
+    #             common_dr=set_a & set_b
+    #         list_dr.append(len(common_dr))   
+    #     for i in range(0,len(list_nr)):
+    #         if list_nr[i]!=0 and list_dr[i]!=0:
+    #             prob=list_nr[i]/list_dr[i]
+    #         else:
+    #             prob=0
+    #         tree_structure_probability["PV"+str(i+3)]=prob
+    #         classified_data['probability']=tree_structure_probability  
+
     finalOutput = []
     for i in selection_basket.keys():
         finalOutput.append(selection_basket[i])
@@ -203,13 +209,14 @@ def classification(inserted_id):
             '_id':inserted_id,
         },
         'update_field':{
-            'classifiedData' : classified_data['classified_data'],
-            'probability' : classified_data['probability'],
+            # 'classifiedData' : classified_data['classified_data'],
+            # 'probability' : classified_data['probability'],
             'finalOutput' : finalOutput
         }
     })
-    dowellConnectionOutput['data'][0]['probability'] = classified_data['classified_data']
-    dowellConnectionOutput['data'][0]['probability'] = classified_data['probability'] 
+
+    # dowellConnectionOutput['data'][0]['classifiedData'] = classified_data['classified_data']
+    # dowellConnectionOutput['data'][0]['probability'] = classified_data['probability'] 
     dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
     dowellConnectionOutput['data'][0].pop('permutationsVariables')
     dowellConnectionOutput['data'][0].pop('r')
@@ -226,11 +233,13 @@ def classificationType(request):
         request_data=json.loads(request.body)
         numberOfLevels=request_data['numberOfLevels']
         classificationType = request_data['classificationType']
+        dbInsertedId = request_data['dbInsertedId']
         output_data={
             'classificationType':classificationType,
             'numberOfLevels':numberOfLevels,
             'eventId':get_event_id(),
             'permutationsVariables':[],
+            'dbInsertedId':dbInsertedId,
         }
         callDowellConnection = dowellConnection({
                 'command':'insert',
@@ -249,7 +258,7 @@ def basketSelection(request):
         baskets = request_data['baskets']
         inserted_id = request_data['inserted_id']
         if(len(baskets) == 0):
-            data = dbData()
+            data = dbData(inserted_id)
             basket = data.keys()
             baskets = []
             for i in basket:
@@ -281,7 +290,7 @@ def basketSelection(request):
                             'permutationsVariables': [selectedBasket],
                             'n': len(baskets),
                             'r': numberOfLevels,
-                            'numberOfPermutations': int(factorial(len(baskets))/factorial(len(baskets)-numberOfLevels)),
+                            'numberOfPermutations': 0,
                         }
                     })
                     return JsonResponse({
@@ -327,7 +336,7 @@ def itemSelection(request):
             basketOrder = dowellConnectionOutput['data'][0]['permutationsVariables']
             items = {}
             totalLength = {}
-            data = dbData()
+            data = dbData(inserted_id)
             for i in basketOrder:
                 items[i] = data[i]
                 totalLength[i] = len(data[i])
@@ -497,6 +506,21 @@ def itemSelection(request):
                     }
                 })
                 return JsonResponse({'message': 'Items from all required baskets are successfully selected.'})
+    else:
+        return HttpResponse("Method Not Allowed")   
+
+@csrf_exempt
+def inputData(request):
+    if (request.method=="POST"):
+        request_data=json.loads(request.body)
+        callDowellConnection = dowellConnection({
+                'command':'insert',
+                'field':{
+                    "allBaskets" : request_data,
+                },
+                'update_field':None,
+                })
+        return JsonResponse({ 'dbInsertedId' : callDowellConnection['inserted_id']})
     else:
         return HttpResponse("Method Not Allowed")   
 
