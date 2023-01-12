@@ -1,5 +1,23 @@
 # Dowell Classification API Documentation
 ## Calling Dowell Classification API
+## Inserting baskets and their items
+### URL
+```py
+http://100061.pythonanywhere.com/allbaskets/
+```
+### Request
+```py
+{
+  "india":["agra","delhi","banglore","kolkata","mumbai","chennai"],
+  "profession":["cricketer", "teacher", "manager", "accountant", "engineer"]
+}
+```
+### Response
+```py
+{
+  "dbInsertedId": "63c01a5c77a7ae61c8d0bafe"
+}
+```
 ### For Non Hierarchical Classification
 #### 1. Classification Type
 #### URL
@@ -10,7 +28,8 @@ http://100061.pythonanywhere.com/type/
 ```py
 {
     "numberOfLevels": 2, 
-    "classificationType": "N"
+    "classificationType": "N",
+    "dbInsertedId":"63c01a5c77a7ae61c8d0bafe"
 }
 ```
 #### Response
