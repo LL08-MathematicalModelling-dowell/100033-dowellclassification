@@ -1,5 +1,6 @@
 from API.functions.dowellConnection import dowellConnection
 from API.functions.permutationsFunction import permutationAPI
+from math import factorial
 
 def dbData(data):
     idType = data['idType']
@@ -254,7 +255,8 @@ def selectionOfItems(data):
                 'permutationsVariables':[],
                 'selectedLength':selectedLength,
                 'currentBasket': '',
-                'remainingBaskets':[]
+                'remainingBaskets':[],
+                'allItems':{}
             }
         })
         output = {
@@ -265,5 +267,74 @@ def selectionOfItems(data):
         output['message'] = f'{status} is not a valid status'
         return output
 
-def classification(data):
-    pass
+def classification(insertedId):
+    dowellConnectionOutput = dowellConnection({
+    'command' : 'fetch',
+    'update_field' : None,
+    'field':{
+        '_id':insertedId,
+        },
+    })
+
+    classification_type=dowellConnectionOutput['data'][0]['classificationType']
+    selection_basket=dowellConnectionOutput['data'][0]['finalSelection']
+    total_length=dowellConnectionOutput['data'][0]['totalLength']
+    selected_length=dowellConnectionOutput['data'][0]['selectedLength']
+    final_keys=dowellConnectionOutput['data'][0]['basketOrder']
+
+    finalOutput = []
+    for i in selection_basket.keys():
+        finalOutput.append(selection_basket[i])
+
+    probability = {}
+
+    if(classification_type=='H'):
+        total_dr=1
+        total_nr=1
+        for i in final_keys:
+            total_dr=total_dr*(total_length[i])
+        hie_probability= 1   
+        for i in final_keys:
+            total_nr=total_nr*(selected_length[i])
+        hie_probability=(total_nr/total_dr)    
+        float_hie_probability= "%.15f" %hie_probability          
+        probability = float_hie_probability
+
+    elif(classification_type=='N'):  
+        total_dr=0
+        total_nr=0
+        non_hie_probability=0
+        for i in final_keys:
+            total_dr=total_dr+(total_length[i])
+        for i in final_keys:
+            total_nr=total_nr+(selected_length[i])
+        non_hie_probability=(total_nr/total_dr)               
+        probability = non_hie_probability   
+
+    elif(classification_type=='T'):
+        probability = 1
+        for i in final_keys:
+            probability *= selected_length[i]/total_length[i]
+    
+    dowellConnection({
+        'command':'update',
+        'field':{       
+            '_id':insertedId,
+        },
+        'update_field':{
+            'finalOutput' : finalOutput,
+            'probability':probability
+        }
+    })
+
+    dowellConnectionOutput['data'][0]['probability'] = probability
+    dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
+    dowellConnectionOutput['data'][0].pop('permutationsVariables')
+    dowellConnectionOutput['data'][0].pop('r')
+    dowellConnectionOutput['data'][0].pop('n')
+    dowellConnectionOutput['data'][0].pop('numberOfPermutations')
+    dowellConnectionOutput['data'][0].pop('remainingBaskets')
+    dowellConnectionOutput['data'][0].pop('currentBasket')
+    dowellConnectionOutput['data'][0].pop('allItems')
+    dowellConnectionOutput['data'][0].pop('currentBasketItems')
+    return dowellConnectionOutput['data'][0]
