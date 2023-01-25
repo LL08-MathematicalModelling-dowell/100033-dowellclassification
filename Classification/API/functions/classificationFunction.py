@@ -9,23 +9,23 @@ def dbData(data):
         dbInsertedId = data['id']
     elif(idType == 'insertedId'):
         dowellConnectionOutput = dowellConnection({
-            'command' : 'fetch',
+            'command' : 'find',
             'update_field' : None,
             'field':{
                 '_id':data['id'],
             },
         })
-        dbInsertedId = dowellConnectionOutput['data'][0]['dbInsertedId']
+        dbInsertedId = dowellConnectionOutput['data']['dbInsertedId']
     else:
         data['message'] = f"{data['id']} is an invalid idType"
     allBasketsData = dowellConnection({
-        'command' : 'fetch',
+        'command' : 'find',
         'update_field' : None,
         'field':{
             '_id':dbInsertedId,
         },
     })
-    data = allBasketsData['data'][0]['allBaskets']
+    data = allBasketsData['data']['allBaskets']
     return data
 
 def selectionOfBaskets(data):
@@ -33,14 +33,14 @@ def selectionOfBaskets(data):
     selectedBasket = data['selectedBasket']
     baskets = data['baskets']
     dowellConnectionOutput = dowellConnection({
-        'command' : 'fetch',
+        'command' : 'find',
         'update_field' : None,
         'field':{
             '_id':insertedId,
         },        
     })
-    permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
-    numberOfLevels = dowellConnectionOutput['data'][0]['numberOfLevels']
+    permutationsVariables = dowellConnectionOutput['data']['permutationsVariables']
+    numberOfLevels = dowellConnectionOutput['data']['numberOfLevels']
     baskets.remove(selectedBasket)
 
     if(len(permutationsVariables) == 0):
@@ -117,20 +117,20 @@ def selectionOfItems(data):
     status = data['status']
     
     dowellConnectionOutput = dowellConnection({
-        'command' : 'fetch',
+        'command' : 'find',
         'update_field' : None,
         'field':{
             '_id':insertedId,
         },        
     })
     
-    permutationsVariables = dowellConnectionOutput['data'][0]['permutationsVariables']
-    remainingBaskets = dowellConnectionOutput['data'][0]['remainingBaskets']
-    currentBasket = dowellConnectionOutput['data'][0]['currentBasket']
-    basketOrder = dowellConnectionOutput['data'][0]['basketOrder']
-    classificationType = dowellConnectionOutput['data'][0]['classificationType']
-    currentBasketItems = dowellConnectionOutput['data'][0]['currentBasketItems']
-    dataDb = dowellConnectionOutput['data'][0]['allItems']
+    permutationsVariables = dowellConnectionOutput['data']['permutationsVariables']
+    remainingBaskets = dowellConnectionOutput['data']['remainingBaskets']
+    currentBasket = dowellConnectionOutput['data']['currentBasket']
+    basketOrder = dowellConnectionOutput['data']['basketOrder']
+    classificationType = dowellConnectionOutput['data']['classificationType']
+    currentBasketItems = dowellConnectionOutput['data']['currentBasketItems']
+    dataDb = dowellConnectionOutput['data']['allItems']
 
     def getNextBasketItems(classificationType, nextBasket, itemsSelectedAtPreviousLevel):
         nextBasketItems = []
@@ -206,7 +206,7 @@ def selectionOfItems(data):
                 }) 
                 return output
         else:
-            finalSelection = dowellConnectionOutput['data'][0]['finalSelection']
+            finalSelection = dowellConnectionOutput['data']['finalSelection']
             finalSelection[currentBasket] = permutationsVariables
             remainingBaskets.remove(currentBasket)
             if(len(remainingBaskets) == 1):
@@ -240,7 +240,7 @@ def selectionOfItems(data):
             })
             return output
     elif(status == False):
-        finalSelection = dowellConnectionOutput['data'][0]['finalSelection']
+        finalSelection = dowellConnectionOutput['data']['finalSelection']
         finalSelection[currentBasket] = permutationsVariables
         selectedLength = {}
         for i in finalSelection.keys():
@@ -269,18 +269,18 @@ def selectionOfItems(data):
 
 def classification(insertedId):
     dowellConnectionOutput = dowellConnection({
-    'command' : 'fetch',
+    'command' : 'find',
     'update_field' : None,
     'field':{
         '_id':insertedId,
         },
     })
 
-    classification_type=dowellConnectionOutput['data'][0]['classificationType']
-    selection_basket=dowellConnectionOutput['data'][0]['finalSelection']
-    total_length=dowellConnectionOutput['data'][0]['totalLength']
-    selected_length=dowellConnectionOutput['data'][0]['selectedLength']
-    final_keys=dowellConnectionOutput['data'][0]['basketOrder']
+    classification_type=dowellConnectionOutput['data']['classificationType']
+    selection_basket=dowellConnectionOutput['data']['finalSelection']
+    total_length=dowellConnectionOutput['data']['totalLength']
+    selected_length=dowellConnectionOutput['data']['selectedLength']
+    final_keys=dowellConnectionOutput['data']['basketOrder']
 
     finalOutput = []
     for i in selection_basket.keys():
@@ -327,14 +327,15 @@ def classification(insertedId):
         }
     })
 
-    dowellConnectionOutput['data'][0]['probability'] = probability
-    dowellConnectionOutput['data'][0]['finalOutput'] = finalOutput
-    dowellConnectionOutput['data'][0].pop('permutationsVariables')
-    dowellConnectionOutput['data'][0].pop('r')
-    dowellConnectionOutput['data'][0].pop('n')
-    dowellConnectionOutput['data'][0].pop('numberOfPermutations')
-    dowellConnectionOutput['data'][0].pop('remainingBaskets')
-    dowellConnectionOutput['data'][0].pop('currentBasket')
-    dowellConnectionOutput['data'][0].pop('allItems')
-    dowellConnectionOutput['data'][0].pop('currentBasketItems')
-    return dowellConnectionOutput['data'][0]
+    dowellConnectionOutput['data']['probability'] = probability
+    dowellConnectionOutput['data']['finalOutput'] = finalOutput
+    dowellConnectionOutput['data'].pop('permutationsVariables')
+    dowellConnectionOutput['data'].pop('r')
+    dowellConnectionOutput['data'].pop('n')
+    dowellConnectionOutput['data'].pop('numberOfPermutations')
+    dowellConnectionOutput['data'].pop('remainingBaskets')
+    dowellConnectionOutput['data'].pop('currentBasket')
+    dowellConnectionOutput['data'].pop('allItems')
+    dowellConnectionOutput['data'].pop('currentBasketItems')
+    return dowellConnectionOutput['data']
+
