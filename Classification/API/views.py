@@ -31,28 +31,32 @@ def classificationType(request):
         numberOfLevels=request_data['numberOfLevels']
         classificationType = request_data['classificationType']
         dbInsertedId = request_data['dbInsertedId']
-
-        data = dbData({
-            'idType': 'dbInsertedId',
-            'id':dbInsertedId})
-        baskets = [i for i in data.keys()]
-        
-        callDowellConnection = dowellConnection({
-                'command':'insert',
-                'field':{
-                    'classificationType':classificationType,
-                    'numberOfLevels':numberOfLevels,
-                    'eventId':get_event_id(),
-                    'permutationsVariables':[],
-                    'dbInsertedId':dbInsertedId,
-                    'baskets':baskets
-                    },
-                'update_field':None,
+        if(numberOfLevels <= 5):
+            data = dbData({
+                'idType': 'dbInsertedId',
+                'id':dbInsertedId})
+            baskets = [i for i in data.keys()]
+            
+            callDowellConnection = dowellConnection({
+                    'command':'insert',
+                    'field':{
+                        'classificationType':classificationType,
+                        'numberOfLevels':numberOfLevels,
+                        'eventId':get_event_id(),
+                        'permutationsVariables':[],
+                        'dbInsertedId':dbInsertedId,
+                        'baskets':baskets
+                        },
+                    'update_field':None,
+                    })
+            return JsonResponse({ 
+                'insertedId' : callDowellConnection['inserted_id'],
+                'message':'Select first baskets from the given baskets',
+                'baskets': baskets
                 })
-        return JsonResponse({ 
-            'insertedId' : callDowellConnection['inserted_id'],
-            'message':'Select first baskets from the given baskets',
-            'baskets': baskets
+        else:
+            return JsonResponse({
+                'message': f"Number of levels cannot be greater than 5"
             })
     else:
         return HttpResponse("Method Not Allowed")
