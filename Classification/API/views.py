@@ -17,6 +17,7 @@ def allBaskets(request):
                 'command':'insert',
                 'field':{
                     "allBaskets" : request_data,
+                    "basketOrder":[]
                 },
                 'update_field':None,
                 })
@@ -32,31 +33,75 @@ def classificationType(request):
         classificationType = request_data['classificationType']
         dbInsertedId = request_data['dbInsertedId']
         if(numberOfLevels <= 5):
-            data = dbData({
-                'idType': 'dbInsertedId',
-                'id':dbInsertedId})
-            baskets = [i for i in data.keys()]
-            
-            callDowellConnection = dowellConnection({
-                    'command':'insert',
+            if(classificationType == 'T' or classificationType == 'H'):
+                dowellConnectionOutput = dowellConnection({
+                    'command' : 'find',
+                    'update_field' : None,
                     'field':{
-                        'classificationType':classificationType,
-                        'numberOfLevels':numberOfLevels,
-                        'eventId':get_event_id(),
-                        'permutationsVariables':[],
-                        'dbInsertedId':dbInsertedId,
-                        'baskets':baskets
-                        },
-                    'update_field':None,
+                        '_id':dbInsertedId,
+                    },        
+                })
+                basketOrder = dowellConnectionOutput['data']['basketOrder']
+                if(len(basketOrder) != 0):
+                    dataDb = dbData({
+                        'idType':'dbInsertedId',
+                        'id': dbInsertedId
                     })
-            return JsonResponse({ 
-                'insertedId' : callDowellConnection['inserted_id'],
-                'message':'Select first baskets from the given baskets',
-                'baskets': baskets
+                    items = []
+                    for i in dataDb[basketOrder[0]]:
+                        items.append(i['item'])
+                    callDowellConnection = dowellConnection({
+                            'command':'insert',
+                            'field':{
+                                'classificationType':classificationType,
+                                'numberOfLevels':numberOfLevels,
+                                'eventId':get_event_id(),
+                                'permutationsVariables':[],
+                                'dbInsertedId':dbInsertedId,
+                                'basketOrder':basketOrder
+                                },
+                            'update_field':None,
+                            })
+                    return JsonResponse({ 
+                            'insertedId':callDowellConnection['inserted_id'],
+                            'message': 'Select item from the given items for the first basket',
+                            'basket': basketOrder[0],
+                            'items': items
+                        })
+                else:
+                    return JsonResponse({
+                        'message': 'Basket Order is not set, ask your Admin to set the Basket Order'
+                    })    
+            elif(classificationType == 'N'):
+                data = dbData({
+                    'idType': 'dbInsertedId',
+                    'id':dbInsertedId})
+                baskets = [i for i in data.keys()]
+                
+                callDowellConnection = dowellConnection({
+                        'command':'insert',
+                        'field':{
+                            'classificationType':classificationType,
+                            'numberOfLevels':numberOfLevels,
+                            'eventId':get_event_id(),
+                            'permutationsVariables':[],
+                            'dbInsertedId':dbInsertedId,
+                            'baskets':baskets
+                            },
+                        'update_field':None,
+                        })
+                return JsonResponse({ 
+                    'insertedId' : callDowellConnection['inserted_id'],
+                    'message':'Select first baskets from the given baskets',
+                    'baskets': baskets
+                    })
+            else:
+                return JsonResponse({
+                    'message':f"{classificationType} is not a valid classification type"
                 })
         else:
             return JsonResponse({
-                'message': f"Number of levels cannot be greater than 5"
+                'message': "Number of levels cannot be greater than 5"
             })
     else:
         return HttpResponse("Method Not Allowed")

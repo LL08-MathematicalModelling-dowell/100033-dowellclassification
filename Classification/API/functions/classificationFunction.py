@@ -103,6 +103,16 @@ def selectionOfBaskets(data):
                 'currentBasketItems':items
             }
             })
+        dbInsertedId = dowellConnectionOutput['data']['dbInsertedId']
+        dowellConnection({
+            'command':'update',
+            'field':{       
+                '_id':dbInsertedId,
+            },
+            'update_field':{
+                'basketOrder':permutationsVariables,
+            }
+            })
         return {
             'insertedId':insertedId,
             'message': f'{numberOfLevels} baskets are already selected, select item from the given items for the first basket',
