@@ -155,7 +155,7 @@ http://100061.pythonanywhere.com/basket/
 ## 3. Save Selected Basket Order
 ### URL
 ```json
-https://100050.pythonanywhere.com/permutationapi/api/
+http://100061.pythonanywhere.com/savepermutations/
 ```
 ### Request
 ```json
@@ -165,8 +165,6 @@ https://100050.pythonanywhere.com/permutationapi/api/
       "state",
       "city"
     ]
-  ,
-  "command": "savePermutation"
 }
 ```
 ### Response
@@ -250,7 +248,7 @@ http://100061.pythonanywhere.com/item/
 ## 6. Save Selected Order of Items
 ### URL
 ```json
-https://100050.pythonanywhere.com/permutationapi/api/
+http://100061.pythonanywhere.com/savepermutations/
 ```
 ### Request
 ```json
@@ -260,8 +258,6 @@ https://100050.pythonanywhere.com/permutationapi/api/
       "India",
       "Germany"
     ]
-  ,
-  "command": "savePermutation"
 }
 ```
 ### Response
@@ -401,7 +397,7 @@ http://100061.pythonanywhere.com/basket/
 ## 2. Save Selected Basket Order
 ### URL
 ```json
-https://100050.pythonanywhere.com/permutationapi/api/
+http://100061.pythonanywhere.com/savepermutations/
 ```
 ### Request
 ```json
@@ -411,8 +407,6 @@ https://100050.pythonanywhere.com/permutationapi/api/
       "state",
       "city"
     ]
-  ,
-  "command": "savePermutation"
 }
 ```
 ### Response
@@ -508,7 +502,7 @@ http://100061.pythonanywhere.com/item/
 ## 6. Save Selected Order of Items
 ### URL
 ```json
-https://100050.pythonanywhere.com/permutationapi/api/
+http://100061.pythonanywhere.com/savepermutations/
 ```
 ### Request
 ```json
@@ -518,8 +512,6 @@ https://100050.pythonanywhere.com/permutationapi/api/
       "India",
       "Germany"
     ]
-  ,
-  "command": "savePermutation"
 }
 ```
 ### Response
