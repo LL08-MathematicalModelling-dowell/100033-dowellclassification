@@ -58,7 +58,7 @@ def selectionOfBaskets(data):
         })
         return {
             'insertedId':insertedId,
-            'message':'Select next basket from the given baskets',
+            'message':f'{selectedBasket} is selected successfully, select next basket from the given baskets',
             'baskets':baskets
         }
     elif(len(permutationsVariables) < numberOfLevels):

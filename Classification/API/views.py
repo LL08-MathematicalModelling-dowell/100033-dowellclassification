@@ -123,6 +123,23 @@ def itemSelection(request):
         return HttpResponse("Method Not Allowed")
 
 @csrf_exempt
+def savePermutations(request):
+    if(request.method=="POST"):
+        data = json.loads(request.body)
+        dowellConnection({
+            'command':'update',
+            'field':{
+                '_id': data["inserted_id"],
+            },
+            'update_field':{
+                'permutationsVariables':data['selectedPermutation'],
+            },
+        })
+        return JsonResponse({'message' : f"Selected permutation {data['selectedPermutation']} is saved successfully."})
+    else:
+        return HttpResponse("Method Not Allowed")
+
+@csrf_exempt
 def classificationAPI(request):
     if(request.method=="POST"):
         data = json.loads(request.body)

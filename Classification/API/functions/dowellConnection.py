@@ -6,12 +6,12 @@ def dowellConnection(data):
     field = data['field']
     update_field = data['update_field']
     payload = json.dumps({
-    "cluster": "dowellfunctions",
-    "database": "dowellfunctions",
-    "collection": "classification",
-    "document": "classification",
-    "team_member_ID": "1196001",
-    "function_ID": "ABCDE",
+        "cluster": "dowellfunctions",
+        "database": "dowellfunctions",
+        "collection": "classification",
+        "document": "classification",
+        "team_member_ID": "1196001",
+        "function_ID": "ABCDE",
         "command": command,
         "field": field,
         "update_field": update_field,

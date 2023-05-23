@@ -11,9 +11,17 @@ def permutationAPI(data):
         "nextVariable": nextVariable,
         "command":command,
         "selectedPermutation": selectedPermutation,
+        'custom_collection':{
+            "cluster": "dowellfunctions",
+            "database": "dowellfunctions",
+            "collection": "classification",
+            "document": "classification",
+            "team_member_ID": "1196001",
+            "function_ID": "ABCDE",
+        },
         }
     headers = {
         'content-type': 'application/json'
         }
-    response = requests.post(url, json =data,headers=headers)
+    response = requests.post(url, json = payload, headers=headers)
     return response.json()  

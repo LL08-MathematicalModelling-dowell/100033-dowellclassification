@@ -1,10 +1,12 @@
 import requests
+from datetime import datetime
+
 
 def get_event_id():
-    from datetime import datetime
     dd=datetime.now()
     time=dd.strftime("%d:%m:%Y,%H:%M:%S")
-    url="https://100003.pythonanywhere.com/event_creation"
+    url="https://uxlivinglab.pythonanywhere.com/create_event"
+
     data={
         "platformcode":"FB" ,
         "citycode":"101",
@@ -29,6 +31,8 @@ def get_event_id():
         "hashtags":"hash tag alue",
         "mentions":"mentions value",
         "emojis":"emojis",
+
     }
-    r=requests.post(url,json=data)
-    return r.text
+
+    r=requests.post(url,json=data).json()
+    return r["event_id"]

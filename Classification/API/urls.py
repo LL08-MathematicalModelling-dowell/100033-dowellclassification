@@ -6,5 +6,6 @@ urlpatterns = [
     path('type/', views.classificationType),
     path('basket/', views.basketSelection),
     path('item/', views.itemSelection),
+    path('savepermutations/', views.savePermutations),
     path('function/',views.classificationAPI),
 ]
