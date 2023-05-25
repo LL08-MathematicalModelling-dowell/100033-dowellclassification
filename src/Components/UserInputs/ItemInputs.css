@@ -1,0 +1,42 @@
+.inputItems {
+  display: flex;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.inputs > input {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 90px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px gray solid;
+}
+
+.inputs > input:focus{
+    outline: none !important;
+    border: 1px solid #BDD7FA;
+  }
+
+  .inputsName {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .inputItems > button {
+    width: 90px;
+    height: 30px;
+    cursor: pointer;
+    background-color: lightgray;
+    color: black;
+    border-radius: 4px;
+    border: none;
+    margin-top: 10px;
+  }

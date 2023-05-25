@@ -1,0 +1,18 @@
+.levelData {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.levelDataP {
+  width: 100px;
+}
+
+.inputComp {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
