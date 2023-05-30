@@ -4,7 +4,7 @@ import './BasketSelection.css'
 import SaveSelectedBasketOrder from '../SaveSelectedBasketOrder/SaveSelectedBasketOrder'
 
 
-function BasketSelection({ basketName, baskets}) {
+function BasketSelection(props) {
   const [message, setMessage] = React.useState("")
   //const [selectedPermutation, setselectedPermutation] = React.useState([])
   const [permutations, setpermutations] = React.useState([])
@@ -16,15 +16,15 @@ function BasketSelection({ basketName, baskets}) {
       const resp = await axios.post(
         'http://100061.pythonanywhere.com/basket/', {
 
-        'selectedBasket': basketName,
-        'baskets': baskets,
-        'insertedId': insertedId
+        'selectedBasket': props.basketName,
+        'baskets': props.baskets,
+        'insertedId': props.insertedId
       })
 
       console.log(resp.data)
       setMessage(() => resp.data.message)
       //setselectedPermutation(() => resp.data.selectedPermutation)
-      setpermutations(() => resp.data.permutations)
+      setpermutations(resp.data.permutations)
       setinsertedId(()=>resp.data.insertedId)
     } catch (err) {
       console.log(err.response)
@@ -33,12 +33,12 @@ function BasketSelection({ basketName, baskets}) {
 
   return (
     <div>
-      <button className = 'basketSelection' onClick={basketSelection}>{basketName}
+      <button className = 'basketSelection' onClick={basketSelection}>{props.basketName}
       </button>
       {message}
       <div>
             {
-              permutations.map((permutation) => {
+              permutations && permutations.map((permutation) => {
                 return <SaveSelectedBasketOrder  key={permutation} insertedId={insertedId} selectedBasket={permutation}/>
               })
             }
