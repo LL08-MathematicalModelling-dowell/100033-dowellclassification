@@ -66,7 +66,7 @@ function ClassificationType() {
         </div>
       <button onClick={saveClassificationType}>Save classification</button>
       {
-        isEmpty ? <div className='loadingSpinner'></div> : <div className='classificationType'>/k.hpli,kuhnm 
+        isEmpty ? <div className='loadingSpinner'></div> : <div className='classificationType'> 
           <p>{message}</p>
           <div className='baskets'>
             {
@@ -82,21 +82,3 @@ function ClassificationType() {
 }
 
 export default ClassificationType
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

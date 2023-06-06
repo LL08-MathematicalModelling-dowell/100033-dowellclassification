@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-function SaveSelectedBasketOrder({selectedBasket, insertedId}) {
+function SaveSelectedBasketOrder({selectedBasket, inserted_id}) {
   const [message, setMessage] = React.useState("")
 
   const SavePermutations = async () => {
@@ -9,7 +9,7 @@ function SaveSelectedBasketOrder({selectedBasket, insertedId}) {
       const resp = await axios.post(
           'http://100061.pythonanywhere.com/savepermutations/', {
         'selectedPermutation': selectedBasket,
-        'insertedId': insertedId
+        'inserted_id': inserted_id
       })
 
       console.log(resp.data)
@@ -20,11 +20,19 @@ function SaveSelectedBasketOrder({selectedBasket, insertedId}) {
   }
 
   return (
-      <div>
-      <button className = 'SaveSelectedBasketOrder' onClick={SavePermutations}>{selectedBasket}</button>
-      {message}
+    <div>
+      <button className='SaveSelectedBasketOrder' onClick={() => SavePermutations(selectedBasket)}>{selectedBasket && selectedBasket[0]}</button>
+    {message}
     </div>
   )
 }
 
 export default SaveSelectedBasketOrder;
+
+  
+      
+
+
+
+
+
