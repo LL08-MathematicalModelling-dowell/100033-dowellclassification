@@ -57,8 +57,9 @@ function ClassificationType() {
       </div>
        <div className='cType'>
         <label>dbInsertedId</label>
-        <input type="Number" placeholder="dbInsertedId" onChange={handleChange} name="dbInsertedId" value={classificationTypeData.dbInsertedId}/>
-        </div>
+        <input type="Number" placeholder="dbInsertedId" onChange={handleChange} name="dbInsertedId"/>
+      </div>
+      {/*value={classificationTypeData.dbInsertedId}*/}
         <div className='claTypeRadio'>
           <label className='cTypeLabel'>Classification type</label>
           <input type="radio" id="N" name='clType' value="N" onChange={handleChange} checked={classificationTypeData.clType === "N"}/>

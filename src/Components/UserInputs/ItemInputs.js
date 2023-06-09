@@ -41,7 +41,7 @@ function ItemInputs({basketName}) {
                value={itemLink}
                onChange={(e) =>setItemLink(e.target.value)}/>
       </div>
-      <button onClick={addNewItem}>Add to cart</button>
+      <button onClick={addNewItem}>Add</button>
     </div>
   )
 }
