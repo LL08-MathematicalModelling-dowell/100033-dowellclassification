@@ -2,10 +2,11 @@ import React from 'react'
 import axios from 'axios'
 //import './SaveSelectedBasketOrder.css'
 
-function SaveFinalBasketOrder(FinalBasketName, baskets, insertedId) {
+function SaveFinalBasketOrder({ FinalBasketName, baskets, insertedId }) {
   const [message, setMessage] = React.useState("")
 
   const SaveBasketOrder = async () => {
+    
     try {
       const resp = await axios.post(
           'http://100061.pythonanywhere.com/basket/', {
@@ -19,13 +20,12 @@ function SaveFinalBasketOrder(FinalBasketName, baskets, insertedId) {
     } catch (err) {
       console.log(err.response)
     }
-  }
+   }
 
   return (
-      <div>
+    <div>
       <button className='SaveFinalBasketOrder' onClick={()=>SaveBasketOrder(FinalBasketName)}>{FinalBasketName && FinalBasketName}</button>
     {message}
-      <p>{message}</p>
     </div>
   )
 }

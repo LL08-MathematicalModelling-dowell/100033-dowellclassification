@@ -54,6 +54,10 @@ function ClassificationType() {
       <div className='cType'>
         <label>Enter number of levels</label>
         <input type="Number" placeholder="Number of Levels" onChange={handleChange} name="numberOfLevels" value={classificationTypeData.numberOfLevels}/>
+      </div>
+       <div className='cType'>
+        <label>dbInsertedId</label>
+        <input type="Number" placeholder="dbInsertedId" onChange={handleChange} name="dbInsertedId" value={classificationTypeData.dbInsertedId}/>
         </div>
         <div className='claTypeRadio'>
           <label className='cTypeLabel'>Classification type</label>
