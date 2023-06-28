@@ -1,6 +1,5 @@
 from API.functions.dowellConnection import dowellConnection
 from API.functions.permutationsFunction import permutationAPI
-from math import factorial
 
 def dbData(data):
     idType = data['idType']
@@ -37,16 +36,16 @@ def selectionOfBaskets(data):
         'update_field' : None,
         'field':{
             '_id':insertedId,
-        },        
+        },
     })
     permutationsVariables = dowellConnectionOutput['data']['permutationsVariables']
     numberOfLevels = dowellConnectionOutput['data']['numberOfLevels']
-    baskets.remove(selectedBasket)
 
     if(len(permutationsVariables) == 0):
+        baskets.remove(selectedBasket)
         dowellConnection({
             'command':'update',
-            'field':{       
+            'field':{
                 '_id':insertedId,
             },
             'update_field':{
@@ -62,6 +61,7 @@ def selectionOfBaskets(data):
             'baskets':baskets
         }
     elif(len(permutationsVariables) < numberOfLevels):
+        baskets.remove(selectedBasket)
         outputData = permutationAPI({
             "inserted_id": insertedId,
             "nextVariable": selectedBasket,
@@ -89,7 +89,7 @@ def selectionOfBaskets(data):
             totalLength[i] = len(dataDb[i])
         dowellConnection({
             'command':'update',
-            'field':{       
+            'field':{
                 '_id':insertedId,
             },
             'update_field':{
@@ -106,7 +106,7 @@ def selectionOfBaskets(data):
         dbInsertedId = dowellConnectionOutput['data']['dbInsertedId']
         dowellConnection({
             'command':'update',
-            'field':{       
+            'field':{
                 '_id':dbInsertedId,
             },
             'update_field':{
@@ -125,15 +125,15 @@ def selectionOfItems(data):
     selectedItem = data['selectedItem']
     basket = data['basket']
     status = data['status']
-    
+
     dowellConnectionOutput = dowellConnection({
         'command' : 'find',
         'update_field' : None,
         'field':{
             '_id':insertedId,
-        },        
+        },
     })
-    
+
     permutationsVariables = dowellConnectionOutput['data']['permutationsVariables']
     remainingBaskets = dowellConnectionOutput['data']['remainingBaskets']
     currentBasket = dowellConnectionOutput['data']['currentBasket']
@@ -172,17 +172,17 @@ def selectionOfItems(data):
                         'currentBasket': basket,
                         'nextBasket': remainingBaskets[1],
                         'nextBasketItems': getNextBasketItems(classificationType, remainingBaskets[1], [selectedItem])
-                    }     
+                    }
                 dowellConnection({
                     'command':'update',
-                    'field':{       
+                    'field':{
                         '_id':insertedId,
                     },
                     'update_field':{
                         'permutationsVariables': [selectedItem],
                         'currentBasketItems':currentBasketItems
                     }
-                }) 
+                })
                 return output
             else:
                 outputData = permutationAPI({
@@ -201,19 +201,19 @@ def selectionOfItems(data):
                         'message':f'Select and save permutation from the given permutations and select next item from the same basket {basket} or next basket {remainingBaskets[1]}',
                         'nextBasekt': remainingBaskets[1],
                         'nextBasketItems': getNextBasketItems(classificationType, remainingBaskets[1], permutationsVariables)
-                    }     
+                    }
                 output['permutations'] = outputData['permutationsVariables']
                 output['currentBasketItems']= currentBasketItems
                 output['currentBasket']= basket
                 dowellConnection({
                     'command':'update',
-                    'field':{       
+                    'field':{
                         '_id':insertedId,
                     },
                     'update_field':{
                         'currentBasketItems':currentBasketItems
                     }
-                }) 
+                })
                 return output
         else:
             finalSelection = dowellConnectionOutput['data']['finalSelection']
@@ -229,15 +229,15 @@ def selectionOfItems(data):
                     'message':f'{selectedItem} is selected successfully, select next item from the same basket {basket} or the next basket {remainingBaskets[1]}',
                     'nextBasket': remainingBaskets[1],
                     'nextBasketItems':getNextBasketItems(classificationType, remainingBaskets[1], [selectedItem])
-                }  
-            
+                }
+
             output['currentBasket'] = basket
             currentBasketItems = getNextBasketItems(classificationType, basket, permutationsVariables)
             currentBasketItems.remove(selectedItem)
             output['currentBasketItems'] = currentBasketItems
             dowellConnection({
                 'command':'update',
-                'field':{       
+                'field':{
                     '_id':insertedId,
                 },
                 'update_field':{
@@ -257,7 +257,7 @@ def selectionOfItems(data):
             selectedLength[i] = len(finalSelection[i])
         dowellConnection({
             'command':'update',
-            'field':{       
+            'field':{
                 '_id':insertedId,
             },
             'update_field':{
@@ -303,14 +303,14 @@ def classification(insertedId):
         total_nr=1
         for i in final_keys:
             total_dr=total_dr*(total_length[i])
-        hie_probability= 1   
+        hie_probability= 1
         for i in final_keys:
             total_nr=total_nr*(selected_length[i])
-        hie_probability=(total_nr/total_dr)    
-        float_hie_probability= "%.15f" %hie_probability          
+        hie_probability=(total_nr/total_dr)
+        float_hie_probability= "%.15f" %hie_probability
         probability = float_hie_probability
 
-    elif(classification_type=='N'):  
+    elif(classification_type=='N'):
         total_dr=0
         total_nr=0
         non_hie_probability=0
@@ -318,17 +318,17 @@ def classification(insertedId):
             total_dr=total_dr+(total_length[i])
         for i in final_keys:
             total_nr=total_nr+(selected_length[i])
-        non_hie_probability=(total_nr/total_dr)               
-        probability = non_hie_probability   
+        non_hie_probability=(total_nr/total_dr)
+        probability = non_hie_probability
 
     elif(classification_type=='T'):
         probability = 1
         for i in final_keys:
             probability *= selected_length[i]/total_length[i]
-    
+
     dowellConnection({
         'command':'update',
-        'field':{       
+        'field':{
             '_id':insertedId,
         },
         'update_field':{
@@ -348,4 +348,3 @@ def classification(insertedId):
     dowellConnectionOutput['data'].pop('allItems')
     dowellConnectionOutput['data'].pop('currentBasketItems')
     return dowellConnectionOutput['data']
-
