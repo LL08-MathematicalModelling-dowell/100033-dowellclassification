@@ -7,11 +7,11 @@ const Home = () => {
 
     const [totalBaskets,setTotalBaskets] = useState();
 
-    const [itemsBasket1,setItemsBasket1] = useState();
-    const [itemsBasket2,setItemsBasket2] = useState();
-    const [itemsBasket3,setItemsBasket3] = useState();
-    const [itemsBasket4,setItemsBasket4] = useState();
-    const [itemsBasket5,setItemsBasket5] = useState();
+    const [itemsBasket1,setItemsBasket1] = useState("");
+    const [itemsBasket2,setItemsBasket2] = useState("");
+    const [itemsBasket3,setItemsBasket3] = useState("");
+    const [itemsBasket4,setItemsBasket4] = useState("");
+    const [itemsBasket5,setItemsBasket5] = useState("");
 
     const [itemsError1,setItemsError1] = useState(false);
     const [itemsError2,setItemsError2] = useState(false);
@@ -195,6 +195,11 @@ const Home = () => {
   
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if(totalBaskets === undefined){
+
+        }else{
+
         setLoading(true);
         
 
@@ -360,7 +365,7 @@ var myData = JSON.stringify(data);
 var config = {
   method: 'post',
 maxBodyLength: Infinity,
-  url: 'http://100061.pythonanywhere.com/allbaskets/',
+  url: 'https://100061.pythonanywhere.com/allbaskets/',
   headers: { },
   data : myData
 };
@@ -377,7 +382,7 @@ axios(config)
   setShowDbInsertId(false);
 });
 
-
+}
 
 
     }
@@ -405,6 +410,7 @@ axios(config)
             
         </div>}
         <h1 className='text-[24px] font-semibold mb-5'>All Baskets</h1>
+        
         <div className='mb-5 flex flex-col items-center justify-center '>
             <select className='w-[160px] h-8 outline-none' onChange={handleTotalBaskets}>
                 <option className='text-center' disabled selected hidden>Number of Baskets</option>
@@ -1170,8 +1176,8 @@ axios(config)
 
 
         <div className='flex items-center justify-around w-[90%] py-4'>
-            <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-4 rounded hover:bg-purple-600' type='submit'>Submit</button>
-            <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-4 rounded hover:bg-purple-600' >Next Page</button>
+            <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='submit'>Submit</button>
+            
 
         </div>
            
