@@ -18,10 +18,48 @@ const Classification = () => {
  const [insertedId,setInsertedId] = useState("");
  const [permutations,setPermutations] = useState([]);
  const [selectPermutation,setSelectPermutation] = useState("");
+ const [isPermutationSelected,setIsPermutationSelected] = useState(-1);
+ const [showPermutation,setShowPermutation] = useState(false);
 
 
- const handlePermutation = () => {
-    console.log(JSON.stringify(permutations));
+ const submitSelectedPermutation = () => {
+    if(selectPermutation !== ""){ 
+    setLoading(true);
+
+    let data = {
+        "inserted_id": insertedId,
+        "selectedPermutation": selectPermutation
+      };
+
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://100061.pythonanywhere.com/savepermutations/',
+        headers: { },
+        data : data
+      };
+      
+      axios.request(config)
+      .then((response) => {
+       console.log(JSON.stringify(response.data));
+        setMsg(response.data.message);
+        setLoading(false);        
+      })
+      .catch((error) => {
+        setMsg("Something went wrong...!");
+        setLoading(false);
+      });
+
+    }else {
+        alert("Please select permutation then click Save");
+    }
+    
+ }
+
+ const handleSelectedPermutation = (e) => {
+    e.preventDefault();
+    setSelectPermutation(e.target.value);
+    setIsPermutationSelected(e.target.name);
     
  }
 
@@ -41,7 +79,7 @@ const Classification = () => {
     setLoading(true);
     let data = {
         "selectedBasket":selectedBasket,
-        "baskets": remainingBaskets
+        "baskets": newBaskets
     ,
         "insertedId":insertedId
     };
@@ -63,6 +101,7 @@ const Classification = () => {
         setInsertedId(response.data.insertedId);
         if((response.data.permutations) !== undefined) {
             setPermutations(response.data.permutations);
+            setShowPermutation(true);
         }
       })
       .catch((error) => {
@@ -71,7 +110,7 @@ const Classification = () => {
         setLoading(false);
       });
     
-      
+      setSelectedBasket("");
     
  }
 
@@ -106,7 +145,7 @@ const handleSubmit = (e) => {
       
       axios.request(config)
       .then((response) => {
-       // console.log(JSON.stringify(response.data));
+        //console.log(JSON.stringify(response.data));
         setBaskets(response.data.baskets);
         setMsg(response.data.message);
         setInsertedId(response.data.insertedId);
@@ -127,11 +166,10 @@ const handleSubmit = (e) => {
     <>
     <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10' src='loader.gif' alt='loader' />}
-    
-    {permutations === undefined 
-    ?
 
-        <>  <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Classifications" : msg}</h1>
+    {showPermutation === false ? <>
+
+      <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Classifications" : msg}</h1>
     {msg === "" ? <> <div className='flex flex-col items-center justify-center gap-5'>    
         <select className='w-[220px] h-[26px] outline-none' name='numberOfLevels' required onChange={handleInputs} value={inputsData.numberOfLevels} >
                 <option className='text-center' selected hidden>Number of Levels</option>
@@ -180,20 +218,40 @@ const handleSubmit = (e) => {
 
             </div>}
             </> } 
-            </>
-
-            :
-
-            <>
-            <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Permutations" : msg}</h1>
             
+            </>
+            :
+            
+            <>
+            
+            <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Classifications" : msg}</h1>
+
             <div className='flex items-center justify-center gap-5 w-[90%] py-4'>
+            <p className='font-semibold text-[18px]'>Permutations:</p>
             {permutations.map((item, index) => (
-                <button onClick={handleSelectedBasket} className={parseInt(isSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onClick={handleSelectedPermutation} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             </div>
+
+            {/* <div className='flex items-center justify-center gap-5 w-[90%] py-4 mt-2'>
+            <p className='font-semibold text-[18px]'>Baskets:</p>
+            {baskets.map((item, index) => (
+                <button onClick={handleSelectedBasket} className={parseInt(isSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{item}</button>
+            ))}
+            </div> */}
+            
+            <div className='flex items-center justify-center w-[90%] py-5'>
+            <button onClick={submitSelectedPermutation} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Save</button>
+            
+            
+            
+
+            </div>
+
             </>
-            }
+             }
+            
+            
             
     </form>
     </>
