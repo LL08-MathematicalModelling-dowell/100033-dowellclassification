@@ -391,7 +391,7 @@ axios(config)
 
 
   return (
-    <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center'>
+    <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center h-screen'>
         {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10' src='loader.gif' alt='loader' />}
         {showDbInsertId && <div className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px] h-16'>
             <div className='relative bg-slate-800 w-[300px] h-16 rounded flex items-center justify-start '>

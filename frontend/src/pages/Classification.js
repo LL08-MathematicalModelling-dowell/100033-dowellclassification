@@ -20,7 +20,7 @@ const Classification = () => {
  const [selectPermutation,setSelectPermutation] = useState("");
  const [isPermutationSelected,setIsPermutationSelected] = useState(-1);
  const [showPermutation,setShowPermutation] = useState(false);
-
+ const [permutationSaved,setPermutationSaved] = useState(false);
 
  const submitSelectedPermutation = () => {
     if(selectPermutation !== ""){ 
@@ -43,11 +43,15 @@ const Classification = () => {
       .then((response) => {
        console.log(JSON.stringify(response.data));
         setMsg(response.data.message);
-        setLoading(false);        
+        setLoading(false);
+        setPermutationSaved(true);
+        
+        
       })
       .catch((error) => {
         setMsg("Something went wrong...!");
         setLoading(false);
+        setPermutationSaved(false);
       });
 
     }else {
@@ -164,7 +168,7 @@ const handleSubmit = (e) => {
 
   return (
     <>
-    <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center'>
+    <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center h-screen'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10' src='loader.gif' alt='loader' />}
 
     {showPermutation === false ? <>
@@ -224,24 +228,25 @@ const handleSubmit = (e) => {
             
             <>
             
-            <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Classifications" : msg}</h1>
+            <h1 className='text-[24px] font-semibold mb-5'>{msg === "" ? "Classifications" : {msg}}</h1>
 
-            <div className='flex items-center justify-center gap-5 w-[90%] py-4'>
+            {
+              permutationSaved ? ""
+              :
+              <div className='flex items-center justify-center gap-5 w-[90%] py-4'>
             <p className='font-semibold text-[18px]'>Permutations:</p>
-            {permutations.map((item, index) => (
+              {permutations.map((item, index) => (
                 <button onClick={handleSelectedPermutation} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
+            
             </div>
-
-            {/* <div className='flex items-center justify-center gap-5 w-[90%] py-4 mt-2'>
-            <p className='font-semibold text-[18px]'>Baskets:</p>
-            {baskets.map((item, index) => (
-                <button onClick={handleSelectedBasket} className={parseInt(isSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{item}</button>
-            ))}
-            </div> */}
+            } 
+           
             
             <div className='flex items-center justify-center w-[90%] py-5'>
-            <button onClick={submitSelectedPermutation} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Save</button>
+            {permutationSaved ?
+            <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Next</button> : 
+            <button onClick={submitSelectedPermutation} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Save</button>}
             
             
             
