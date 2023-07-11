@@ -246,7 +246,7 @@ const submitBasket1 = (e) => {
       let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://100061.pythonanywhere.com/savepermutations/',
+        url: 'https://100061.pythonanywhere.com/savepermutations/',
         headers: { },
         data : data
       };
@@ -324,7 +324,7 @@ const submitBasket2 = (e) => {
       let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://100061.pythonanywhere.com/savepermutations/',
+        url: 'https://100061.pythonanywhere.com/savepermutations/',
         headers: { },
         data : data
       };
@@ -403,7 +403,7 @@ const submitBasket3 = (e) => {
       let config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://100061.pythonanywhere.com/savepermutations/',
+        url: 'https://100061.pythonanywhere.com/savepermutations/',
         headers: { },
         data : data
       };
@@ -505,7 +505,7 @@ const submitBasket3 = (e) => {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://100061.pythonanywhere.com/item/',
+      url: 'https://100061.pythonanywhere.com/item/',
       headers: { },
       data : data
     };
@@ -552,7 +552,7 @@ const submit2ndItem = (e) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://100061.pythonanywhere.com/item/',
+    url: 'https://100061.pythonanywhere.com/item/',
     headers: { },
     data : data
   };
