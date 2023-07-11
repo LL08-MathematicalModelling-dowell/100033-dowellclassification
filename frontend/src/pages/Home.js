@@ -1,9 +1,12 @@
 import React, {useState} from 'react'
 import axios from 'axios';
+import Classification from './Classification';
 
 
 
 const Home = () => {
+
+    const [next,setNext] = useState(false);
 
     const [totalBaskets,setTotalBaskets] = useState();
 
@@ -36,6 +39,7 @@ const Home = () => {
     const [dbInsertedId,setDbInsertedId] = useState("");
     const [showDbInsertId,setShowDbInsertId] = useState(false);
     const [copied,setCopied] = useState(false);
+    const [showClassification,setShowClassification] = useState(false);
 
     const handleCopy = () => {
         const copyText = dbInsertedId;
@@ -48,6 +52,10 @@ const Home = () => {
             setShowDbInsertId(false);
         },1000);
       }
+
+      const handleNext = () => {
+      setShowClassification(true);  
+    }
 
     const handleTotalBaskets = (e) => {
         setTotalBaskets(e.target.value);
@@ -376,10 +384,13 @@ axios(config)
   var myDbInsertedId = JSON.stringify(response.data.dbInsertedId);
   setDbInsertedId(myDbInsertedId);
   setShowDbInsertId(true);
+  setNext(true);
+  
 })
 .catch(function (error) {
   console.log(error);
   setShowDbInsertId(false);
+  setNext(false);
 });
 
 }
@@ -391,8 +402,14 @@ axios(config)
 
 
   return (
-    <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center w-full h-fit'>
-        {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10' src='loader.gif' alt='loader' />}
+    <>
+    {showClassification === true ? <Classification /> : <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center w-full h-fit'>
+        
+
+        {next && <button onClick={handleNext} className='absolute bg-purple-700 cursor-pointer text-white font-semibold py-2 px-6 rounded-l hover:bg-purple-600 right-0' type='button'>Next</button>}
+
+
+        {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
         {showDbInsertId && <div className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px] h-16'>
             <div className='relative bg-slate-800 w-[300px] h-16 rounded flex items-center justify-start '>
                 <div className='text-white text-[12px] px-1'>dbInsertedId: <span className='text-orange-400 font-semibold'>{dbInsertedId}</span></div>
@@ -1190,7 +1207,8 @@ axios(config)
         
             
         
-    </form>
+    </form>}
+    </>
   )
 }
 
