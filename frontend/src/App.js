@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import Home from './pages/Home';
 import Classification from './pages/Classification';
+import Test from './pages/Test';
 
 function App() {
 
@@ -10,6 +11,7 @@ function App() {
   
 
   return (
+    <>
     <div className='bg-purple-300 w-full h-fit'>
       {showHome && <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-2 rounded-r hover:bg-purple-600' type='button' onClick={()=>{setShowHome(false);setIsDbId(true)}}>Back</button>}
 
@@ -27,6 +29,8 @@ function App() {
       {showHome && <Home />}
       {showClassification && <Classification />}
       </div>
+      
+      </>
   );
 }
 

@@ -3,6 +3,9 @@ import axios from 'axios';
 
 const Classification = () => {
 
+
+
+
  
  
  const [baskets,setBaskets] = useState([]);
@@ -22,6 +25,7 @@ const Classification = () => {
  const [nextBasketItems,setNextBasketItems] = useState([]);
  const [selectedItem,setSelectedItem] = useState("");
  const [isItemSelected,setIsItemSelected] = useState(-1);
+ const [isItemSelected1,setIsItemSelected1] = useState(-1);
  const [itemSelectedBasket,setItemSelectedBasket] = useState("");
 
  const [numberLevelError,setNumberLevelError] = useState(true);
@@ -39,13 +43,13 @@ const Classification = () => {
  const [itemScreen1,setItemScreen1] = useState(false);
  const [itemScreen2,setItemScreen2] = useState(false);
  const [itemScreen3,setItemScreen3] = useState(false);
+ const [itemScreen4,setItemScreen4] = useState(false);
+ const [itemScreen5,setItemScreen5] = useState(false);
+ const [itemScreen6,setItemScreen6] = useState(false);
  
-
  
-
 
  const handleBasket1 = (e) => {
-    e.preventDefault();
     setSelectedBasket(e.target.value);
     setIsSelected(e.target.name);
     setSavePermutation([...savePermutation, e.target.value]);
@@ -73,26 +77,33 @@ const Classification = () => {
     setSelectedPermutation(e.target.value);
     setIsPermutationSelected(e.target.name);
 }
+
+
+const handleItemSelectedBasket1 = () =>{
+  setItemSelectedBasket(currentBasket);
+}
 const handleitems = (e) => {
   e.preventDefault();
     setSelectedItem(e.target.value);
     setIsItemSelected(e.target.name);
     handleItemSelectedBasket1();
+    setSavePermutation([...savePermutation, e.target.value]);
+    
 }
 
-const handleitems1 = (e) => {
-  e.preventDefault();
-    setSelectedItem(e.target.value);
-    setIsItemSelected(e.target.name);
-    handleItemSelectedBasket2();
-}
 
-const handleItemSelectedBasket1 = () =>{
-  setItemSelectedBasket(currentBasket);
-}
 const handleItemSelectedBasket2 = () =>{
   setItemSelectedBasket(nextBasket);
 }
+const handleitems1 = (e) => {
+  e.preventDefault();
+    setSelectedItem(e.target.value);
+    setIsItemSelected1(e.target.name);
+    handleItemSelectedBasket2();
+    setSavePermutation([...savePermutation, e.target.value]);
+    
+  }
+
 
  
 
@@ -103,7 +114,7 @@ const handleItemSelectedBasket2 = () =>{
  const [inputsData,setInputsData] = useState({
   numberOfLevels: "",
   typeOfClassification: "",
-  dbInsertedId: ""
+  dbInsertedId: "649bc917da081daa9f9523a0"
 });
 
 
@@ -201,7 +212,7 @@ const handleSubmit = (e) => {
 }
 const submitBasket1 = (e) => {
   e.preventDefault(); 
-
+  setSelectedBasket(e.target.value);
   
     
   const newBaskets = [...baskets];
@@ -214,6 +225,8 @@ const submitBasket1 = (e) => {
   ,
       "insertedId":insertedId
   };
+
+  
 
     let config = {
       method: 'post',
@@ -270,7 +283,7 @@ const submitBasket1 = (e) => {
     });
   
     setSelectedBasket("");
-   
+    setIsSelected(-1);
     
 }
 
@@ -348,6 +361,7 @@ const submitBasket2 = (e) => {
     });
   
     setSelectedBasket("");
+    setIsSelected(-1);
   }else{
     alert("Please select the 2nd basket")
   }
@@ -358,7 +372,7 @@ const submitBasket2 = (e) => {
 
 
 const submitBasket3 = (e) => {
-  e.preventDefault(); 
+  e.preventDefault();
     
     
 
@@ -439,6 +453,8 @@ const submitBasket3 = (e) => {
       setBasketScreen4(false);
       }
     }
+    setIsPermutationSelected(-1);
+    setIsSelected(-1);
 }
      
 
@@ -485,8 +501,14 @@ const submitBasket3 = (e) => {
       });
     
       setSelectedBasket("");
-  
+      setIsItemSelected(-1);
+      setSavePermutation([]);
+      setPermutations([""]);
+      setIsPermutationSelected(-1)
   }
+
+
+ 
 
   const submit1stItem = (e) => {
     e.preventDefault();
@@ -500,7 +522,11 @@ const submitBasket3 = (e) => {
       "status":true
     };
 
-   
+    console.log("Data: ",data)
+
+     
+     
+     
 
     let config = {
       method: 'post',
@@ -513,12 +539,41 @@ const submitBasket3 = (e) => {
     axios.request(config)
     .then((response) => {
       console.log(JSON.stringify(response.data));
-      setLoading(false);
-      setItemScreen2(true);
       setCurrentBasket(response.data.currentBasket);
       setCurrentBasketItems(response.data.currentBasketItems);
       setNextBasket(response.data.nextBasket);
       setNextBasketItems(response.data.nextBasketItems);
+
+
+      
+      
+      //// Permutation API Call
+      let data = {
+        "inserted_id": insertedId,
+        "selectedPermutation": savePermutation
+      };
+
+      console.log("Data: ",data)
+
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://100061.pythonanywhere.com/savepermutations/',
+        headers: { },
+        data : data
+      };
+
+      axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setLoading(false);
+        setItemScreen2(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+        setItemScreen2(false);
+      });
     })
     .catch((error) => {
       console.log(error);
@@ -532,6 +587,7 @@ const submitBasket3 = (e) => {
       setItemScreen2(false);
     }
     setSelectedItem("");
+    setIsItemSelected(-1);
 
 }
 
@@ -547,6 +603,9 @@ const submit2ndItem = (e) => {
       "insertedId":insertedId,
       "status":true
   };
+
+   console.log("Data: ",data)
+
   
 
   let config = {
@@ -566,6 +625,36 @@ const submit2ndItem = (e) => {
     setCurrentBasketItems(response.data.currentBasketItems);
     setNextBasket(response.data.nextBasket);
     setNextBasketItems(response.data.nextBasketItems);
+    setPermutations(response.data.permutations);
+
+    //// Permutation API Call
+    let data = {
+      "inserted_id": insertedId,
+      "selectedPermutation": savePermutation
+    };
+
+    console.log("Data: ",data)
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://100061.pythonanywhere.com/savepermutations/',
+      headers: { },
+      data : data
+    };
+
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      setLoading(false);
+      setItemScreen3(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoading(false);
+      setItemScreen3(false);
+    });
+
   })
   .catch((error) => {
     console.log(error);
@@ -579,7 +668,180 @@ const submit2ndItem = (e) => {
     setItemScreen3(false);
   }
   setSelectedItem("");
+  setIsItemSelected(-1);
+  setIsItemSelected1(-1);
+  setIsPermutationSelected(-1);
 
+}
+
+
+
+
+const submit3rdItem = (e) => {
+  e.preventDefault();
+
+  if(selectedItem !== ""){
+    setLoading(true);
+  let data = {
+      "selectedItem":selectedItem,
+      "basket":itemSelectedBasket,
+      "insertedId":insertedId,
+      "status":true
+  };
+
+      //// Data Console.Log
+      console.log("Data: ",data);
+
+   
+  
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/item/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setLoading(false);
+    setItemScreen4(true);
+    setCurrentBasket(response.data.currentBasket);
+    setCurrentBasketItems(response.data.currentBasketItems);
+    setNextBasket(response.data.nextBasket);
+    setNextBasketItems(response.data.nextBasketItems);
+
+    //// Permutation API Call
+    let data = {
+      "inserted_id": insertedId,
+      "selectedPermutation":savePermutation
+    };
+
+        //// Data Console.Log
+        console.log("Data: ",data);
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://100061.pythonanywhere.com/savepermutations/',
+      headers: { },
+      data : data
+    };
+
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      setLoading(false);
+      setItemScreen4(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoading(false);
+      setItemScreen4(false);
+    });
+
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+    setItemScreen4(false);
+  });
+
+  }else {
+    alert("Please select an item");
+    setLoading(false);
+    setItemScreen4(false);
+  }
+  setSelectedItem("");
+  setIsItemSelected(-1);
+  setIsItemSelected1(-1);
+  setIsPermutationSelected(-1);
+}
+
+const submit4thItem = (e) => {
+  e.preventDefault();
+
+  if(selectedItem !== ""){
+    setLoading(true);
+  let data = {
+      "selectedItem":selectedItem,
+      "basket":itemSelectedBasket,
+      "insertedId":insertedId,
+      "status":true
+  };
+
+      //// Data Console.Log
+      console.log("Data: ",data);
+
+
+  
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/item/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setLoading(false);
+    setItemScreen5(true);
+    setCurrentBasket(response.data.currentBasket);
+    setCurrentBasketItems(response.data.currentBasketItems);
+    setNextBasket(response.data.nextBasket);
+    setNextBasketItems(response.data.nextBasketItems);
+
+    //// Permutation API Call
+    let data = {
+      "inserted_id": insertedId,
+      "selectedPermutation":savePermutation
+    };
+
+        //// Data Console.Log
+        console.log("Data: ",data);
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://100061.pythonanywhere.com/savepermutations/',
+      headers: { },
+      data : data
+    };
+
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      setLoading(false);
+      setItemScreen5(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoading(false);
+      setItemScreen5(false);
+    });
+
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+    setItemScreen5(false);
+  });
+
+  }else {
+    alert("Please select an item");
+    setLoading(false);
+    setItemScreen5(false);
+  }
+  setSelectedItem("");
+  setIsItemSelected(-1);
+  setIsItemSelected1(-1);
+  setIsPermutationSelected(-1);
+  setSavePermutation([]);
 }
 
  
@@ -588,12 +850,82 @@ const submit2ndItem = (e) => {
   return (
     <>
 
+      <div className='flex justify-center items-center'>
+          <h1 className='text-center font-bold text-[20px]'>{inputsData.typeOfClassification}</h1>
+      </div>
 
+
+{itemScreen6 === true ?
+   
+   "Item 6 Selection"
+  
+   :
+   <>
+  {itemScreen5 === true ?
+   
+   "Item 5 Selection"
+  
+   :
+   <>
+    {itemScreen4 === true ?
+   
+    "Item 4 Selection"
+   
+    :
+    <>
     {itemScreen3 === true ?
       
       <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-      <h1 className='text-[30px] text-[red] font-semibold mb-5'>Under Construction....!</h1>
-      </form>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select 3rd item from 1st Basket {currentBasket} or 2nd Basket {nextBasket}</h1>
+
+
+        <h1 className='text-[24px] font-semibold mb-5 mt-5'>1st Basket: {currentBasket}</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {currentBasketItems.map((item, index) => (
+                <button onClick={handleitems} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        <h1 className='text-[24px] font-semibold mb-5 mt-5'>2nd Basket: {nextBasket}</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+
+     {nextBasketItems.map((item, index) => (
+                <button onClick={handleitems1} className={parseInt(isItemSelected1) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        <h1 className='text-[24px] font-semibold mb-5 mt-5'>Permutations:</h1>
+
+        {/* <div className='flex items-center justify-center gap-5 flex-wrap'>
+
+     {permutations.map((item, index) => (
+                <button onClick={handlePermutation1} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div> */}
+
+        
+
+        <div className='flex items-center justify-center w-[90%] py-5'>
+            <button onClick={submit3rdItem} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600 mt-5' type='button'>Submit</button>
+            
+
+        </div>
+            
+    </form>
 
     :
     <>
@@ -617,7 +949,7 @@ const submit2ndItem = (e) => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {currentBasketItems.map((item, index) => (
-                <button onClick={handleitems} className={parseInt(setIsItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onClick={handleitems} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -627,7 +959,7 @@ const submit2ndItem = (e) => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
 
      {nextBasketItems.map((item, index) => (
-                <button onClick={handleitems1} className={parseInt(setIsItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onClick={handleitems1} className={parseInt(isItemSelected1) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -661,7 +993,7 @@ const submit2ndItem = (e) => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {items.map((item, index) => (
-                <button onClick={handleitems} className={parseInt(setIsItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onClick={handleitems} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -873,7 +1205,9 @@ const submit2ndItem = (e) => {
     </>}
     </>}
     </>}
-
+    </>}
+    </>}
+    </>}
 
     </>
   )
