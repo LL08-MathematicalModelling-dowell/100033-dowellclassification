@@ -1,7 +1,6 @@
 import React,{useState} from 'react';
 import Home from './pages/Home';
 import Classification from './pages/Classification';
-import Test from './pages/Test';
 
 function App() {
 
