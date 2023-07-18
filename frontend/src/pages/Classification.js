@@ -852,9 +852,9 @@ const submit4thItem = (e) => {
 
 const submit5thItem = (e) => {
   e.preventDefault();
+  setLoading(true);
 
   if(selectedItem !== ""){
-    setLoading(true);
   let data = {
     "selectedItem":selectedItem,
     "basket":myBasket3,
@@ -901,7 +901,7 @@ const submit5thItem = (e) => {
     axios.request(config)
     .then((response) => {
       console.log(JSON.stringify(response.data));
-      setLoading(false);
+      
       setItemScreen6(true);
     })
     .catch((error) => {
@@ -924,7 +924,7 @@ const submit5thItem = (e) => {
   setSelectedItem("");
   setIsItemSelected(-1);
   setPermutations([]);
-  
+  setLoading(false);
 }
 
 const submit6thItem = (e) => {
