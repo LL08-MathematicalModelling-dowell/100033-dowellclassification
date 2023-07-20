@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import Home from './pages/Home';
-import Classification from './pages/Classification';
+import ClassificationType from './pages/ClassificationType';
 
 function App() {
 
@@ -26,7 +26,7 @@ function App() {
         </div>
       </div>}
       {showHome && <Home />}
-      {showClassification && <Classification />}
+      {showClassification && <ClassificationType />}
       </div>
       
       </>

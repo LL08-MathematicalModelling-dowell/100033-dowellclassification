@@ -11,7 +11,6 @@ const Classification = () => {
  const [baskets,setBaskets] = useState([]);
  const [loading,setLoading] = useState(false);
  const [selectedBasket,setSelectedBasket] = useState("");
- const [remainingBaskets,setRemainingBaskets] = useState([]);
  const [isSelected,setIsSelected] = useState(-1);
  const [insertedId,setInsertedId] = useState("");
  const [permutations,setPermutations] = useState([]);
@@ -30,7 +29,7 @@ const Classification = () => {
  const [isItemSelected1,setIsItemSelected1] = useState(-1);
  const [itemSelectedBasket,setItemSelectedBasket] = useState("");
  const [finalOutput,setFinalOutput] = useState([]);
-
+ const [showItemsPermutation,setShowItemsPermutation] = useState(false);
 
 
  const [numberLevelError,setNumberLevelError] = useState(true);
@@ -48,11 +47,9 @@ const Classification = () => {
  const [basketScreen4,setBasketScreen4] = useState(false);
  const [itemScreen1,setItemScreen1] = useState(false);
  const [itemScreen2,setItemScreen2] = useState(false);
- const [itemScreen3A,setItemScreen3A] = useState(false);
- const [itemScreen3B,setItemScreen3B] = useState(false);
+ const [itemScreen3,setItemScreen3] = useState(false);
  const [itemScreen4,setItemScreen4] = useState(false);
- const [itemScreen5A,setItemScreen5A] = useState(false);
- const [itemScreen5B,setItemScreen5B] = useState(false);
+ const [itemScreen5,setItemScreen5] = useState(false);
  const [itemScreen6,setItemScreen6] = useState(false);
  const [itemScreen7,setItemScreen7] = useState(false);
  const [functionScreen1,setFunctionScreen1] = useState(false);
@@ -62,13 +59,40 @@ const Classification = () => {
  const [myBasket2, setMyBasket2] = useState("")
  const [myBasket3, setMyBasket3] = useState("")
  /// Items to Show
- const [myBasket1Item1, setMyBasket1Item1] = useState("")
- const [myBasket1Item2, setMyBasket1Item2] = useState("")
- const [myBasket2Item1, setMyBasket2Item1] = useState("")
- const [myBasket2Item2, setMyBasket2Item2] = useState("")
- const [myBasket3Item1, setMyBasket3Item1] = useState("")
- const [myBasket3Item2, setMyBasket3Item2] = useState("")
- 
+ const [myBasket1Items, setMyBasket1Items] = useState([])
+ const [myBasket2Items, setMyBasket2Items] = useState([])
+ const [myBasket3Items, setMyBasket3Items] = useState([])
+
+ // Classification Function States
+
+ const [cfState, setCfState] = useState({
+  _id: "",
+  classificationType: "",
+  numberOfLevels: "",
+  eventId: "",
+  dbInsertedId: "",
+  baskets: "",
+  basketOrder: "",
+  finalSelection: {
+  country: "",
+  state: "",
+  city: "",
+  },
+  totalLength: {
+  country: "",
+  state: "",
+  city: "",
+  },
+  selectedLength: {
+  country: "",
+  state: "",
+  city: "",
+  },
+  probability: "",
+  finalOutput: "",
+  });
+  
+  
 
  const handleBasket1 = (e) => {
     e.preventDefault();
@@ -99,7 +123,7 @@ const Classification = () => {
   e.preventDefault();
     setSelectedPermutation(e.target.value);
     setIsPermutationSelected(e.target.name);
-    setSavePermutation([...savePermutation, e.target.value]);
+    // setSavePermutation([...savePermutation, e.target.value]);
 }
 
 const handlePermutation3 = (e) => {
@@ -114,7 +138,6 @@ const handleitems = (e) => {
   e.preventDefault();
     setSelectedItem(e.target.value);
     setIsItemSelected(e.target.name);
-    setItemSelectedBasket(currentBasket);
     setSavePermutation([...savePermutation, e.target.value]);
     
 }
@@ -125,7 +148,6 @@ const handleitems1 = (e) => {
   e.preventDefault();
     setSelectedItem(e.target.value);
     setIsItemSelected1(e.target.name);
-    setItemSelectedBasket(nextBasket);
     setSavePermutation1([...savePermutation1, e.target.value]);
   }
 
@@ -133,7 +155,6 @@ const handleitems1 = (e) => {
     e.preventDefault();
       setSelectedItem(e.target.value);
       setIsItemSelected1(e.target.name);
-      setItemSelectedBasket(nextBasket);
       setSavePermutation2([...savePermutation2, e.target.value]);
     }
 
@@ -244,7 +265,7 @@ const submitBasket1 = (e) => {
     
   const newBaskets = [...baskets];
   
-  setRemainingBaskets(newBaskets);
+  
   setLoading(true);
   let data = {
       "selectedBasket":selectedBasket,
@@ -323,7 +344,7 @@ const submitBasket2 = (e) => {
     
   const newBaskets = [...baskets];
   
-  setRemainingBaskets(newBaskets);
+  
   setLoading(true);
   let data = {
       "selectedBasket":selectedBasket,
@@ -406,7 +427,7 @@ const submitBasket3 = (e) => {
     if(selectedBasket !== ""){
       const newBaskets = [...baskets];
   
-     setRemainingBaskets(newBaskets);
+     
       setLoading(true);
       let data = {
       "selectedBasket":selectedBasket,
@@ -496,7 +517,7 @@ const submitBasket3 = (e) => {
     
       const newBaskets = [...baskets];
   
-     setRemainingBaskets(newBaskets);
+     
       setLoading(true);
       let data = {
       "selectedBasket":selectedBasket,
@@ -553,6 +574,8 @@ const submitBasket3 = (e) => {
       "status":true
     };
 
+    setMyBasket1Items([...myBasket1Items,selectedItem]);
+
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
@@ -568,7 +591,15 @@ const submitBasket3 = (e) => {
       setCurrentBasketItems(response.data.currentBasketItems);
       setNextBasket(response.data.nextBasket);
       setNextBasketItems(response.data.nextBasketItems);
-      setMyBasket1Item1(selectedItem);
+
+      if(response.data.permutations !== undefined){
+        setPermutations(response.data.permutations);
+        setShowItemsPermutation(true);
+      }else{
+        setPermutations([]);
+        setShowItemsPermutation(false);
+      }
+      
 
       
       
@@ -621,96 +652,12 @@ const submit2ndItem = (e) => {
   if(selectedItem !== ""){
     setLoading(true);
   let data = {
-      "selectedItem":selectedItem,
-      "basket":myBasket1,
-      "insertedId":insertedId,
-      "status":true
-  };
-
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: 'https://100061.pythonanywhere.com/item/',
-    headers: { },
-    data : data
-  };
-
-  axios.request(config)
-  .then((response) => {
-    console.log(JSON.stringify(response.data));
-    setLoading(false);
-    setItemScreen3A(true);
-    setCurrentBasket(response.data.currentBasket);
-    setCurrentBasketItems(response.data.currentBasketItems);
-    setNextBasket(response.data.nextBasket);
-    setNextBasketItems(response.data.nextBasketItems);
-    setPermutations(response.data.permutations);
-    setMyBasket1Item2(selectedItem);
-
-     //// Permutation API Call
-  let data = {
-    "inserted_id": insertedId,
-    "selectedPermutation": savePermutation
-  };
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: 'https://100061.pythonanywhere.com/savepermutations/',
-    headers: { },
-    data : data
-  };
-
-  axios.request(config)
-  .then((response) => {
-    console.log(JSON.stringify(response.data));
-    setLoading(false);
-    setItemScreen3A(true);
-  })
-  .catch((error) => {
-    console.log(error);
-    setLoading(false);
-    setItemScreen3A(false);
-  });
-
-  })
-  .catch((error) => {
-    console.log(error);
-    setLoading(false);
-    setItemScreen3A(false);
-  });
-
-  }else {
-    alert("Please select an item");
-    setLoading(false);
-    setItemScreen3A(false);
-  }
-  setSelectedItem("");
-  setIsItemSelected(-1);
-  setIsItemSelected1(-1);
-  setIsPermutationSelected(-1);
-  setSavePermutation([]);
-}
-
-
-
-
-
-
-
-const submit3rdItem = (e) => {
-  e.preventDefault();
-
-  
-    setLoading(true);
-  let data = {
     "selectedItem":selectedItem,
     "basket":myBasket2,
     "insertedId":insertedId,
     "status":true
-  };   
-
+  };
+  setMyBasket2Items([...myBasket2Items,selectedItem]);
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -726,7 +673,15 @@ const submit3rdItem = (e) => {
     setCurrentBasketItems(response.data.currentBasketItems);
     setNextBasket(response.data.nextBasket);
     setNextBasketItems(response.data.nextBasketItems);
-    setMyBasket2Item1(selectedItem);
+
+    if(response.data.permutations !== undefined){
+      setPermutations(response.data.permutations);
+      setShowItemsPermutation(true);
+    }else{
+      setPermutations([]);
+      setShowItemsPermutation(false);
+    }
+    
 
     
     
@@ -748,38 +703,43 @@ const submit3rdItem = (e) => {
     .then((response) => {
       console.log(JSON.stringify(response.data));
       setLoading(false);
-      setItemScreen4(true);
+       setItemScreen4(true);
     })
     .catch((error) => {
       console.log(error);
       setLoading(false);
-      setItemScreen4(false);
+       setItemScreen4(false);
     });
   })
   .catch((error) => {
     console.log(error);
     setLoading(false);
-    setItemScreen4(false);
+     setItemScreen4(false);
   });
 
-  
+  }else {
+    alert("Please select an item");
+    setLoading(false);
+     setItemScreen4(false);
+  }
   setSelectedItem("");
   setIsItemSelected(-1);
- 
+
 }
 
-const submit4thItem = (e) => {
+const submit3rdItem = (e) => {
   e.preventDefault();
 
   if(selectedItem !== ""){
     setLoading(true);
   let data = {
-      "selectedItem":selectedItem,
-      "basket":myBasket2,
-      "insertedId":insertedId,
-      "status":true
+    "selectedItem":selectedItem,
+    "basket":myBasket2,
+    "insertedId":insertedId,
+    "status":true
   };
 
+  setMyBasket2Items([...myBasket2Items,selectedItem]);
 
   let config = {
     method: 'post',
@@ -792,23 +752,27 @@ const submit4thItem = (e) => {
   axios.request(config)
   .then((response) => {
     console.log(JSON.stringify(response.data));
-    setLoading(false);
-    setItemScreen5A(true);
     setCurrentBasket(response.data.currentBasket);
     setCurrentBasketItems(response.data.currentBasketItems);
     setNextBasket(response.data.nextBasket);
     setNextBasketItems(response.data.nextBasketItems);
-    setPermutations(response.data.permutations);
-    setMyBasket2Item2(selectedItem);
 
+    if(response.data.permutations !== undefined){
+      setPermutations(response.data.permutations);
+      setShowItemsPermutation(true);
+    }else{
+      setPermutations([]);
+      setShowItemsPermutation(false);
+    }
     
 
+    
+    
     //// Permutation API Call
     let data = {
       "inserted_id": insertedId,
-      "selectedPermutation":savePermutation1
+      "selectedPermutation": savePermutation1
     };
-
 
     let config = {
       method: 'post',
@@ -822,48 +786,45 @@ const submit4thItem = (e) => {
     .then((response) => {
       console.log(JSON.stringify(response.data));
       setLoading(false);
-      setItemScreen5A(true);
+       setItemScreen4(true);
     })
     .catch((error) => {
       console.log(error);
       setLoading(false);
-      setItemScreen5A(false);
+       setItemScreen4(false);
     });
-
   })
   .catch((error) => {
     console.log(error);
     setLoading(false);
-    setItemScreen5A(false);
+     setItemScreen4(false);
   });
 
   }else {
     alert("Please select an item");
     setLoading(false);
-    setItemScreen5A(false);
+     setItemScreen4(false);
   }
   setSelectedItem("");
   setIsItemSelected(-1);
-  setIsItemSelected1(-1);
-  setIsPermutationSelected(-1);
-  setPermutations([]);
+
 }
 
 
-const submit5thItem = (e) => {
+
+
+const submit4thItem = (e) => {
   e.preventDefault();
-  setLoading(true);
 
   if(selectedItem !== ""){
+    setLoading(true);
   let data = {
     "selectedItem":selectedItem,
     "basket":myBasket3,
     "insertedId":insertedId,
     "status":true
-  };   
-
- 
-
+  };
+  setMyBasket3Items([...myBasket3Items,selectedItem]);
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -877,7 +838,16 @@ const submit5thItem = (e) => {
     console.log(JSON.stringify(response.data));
     setCurrentBasket(response.data.currentBasket);
     setCurrentBasketItems(response.data.currentBasketItems);
-    setMyBasket3Item1(selectedItem);
+    
+
+    if(response.data.permutations !== undefined){
+      setPermutations(response.data.permutations);
+      setShowItemsPermutation(true);
+    }else{
+      setPermutations([]);
+      setShowItemsPermutation(false);
+    }
+    
 
     
     
@@ -887,9 +857,6 @@ const submit5thItem = (e) => {
       "selectedPermutation": savePermutation2
     };
 
-    
-    
-
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
@@ -901,43 +868,44 @@ const submit5thItem = (e) => {
     axios.request(config)
     .then((response) => {
       console.log(JSON.stringify(response.data));
-      
-      setItemScreen6(true);
+      setLoading(false);
+       setItemScreen6(true);
     })
     .catch((error) => {
       console.log(error);
       setLoading(false);
-      setItemScreen6(false);
+       setItemScreen6(false);
     });
   })
   .catch((error) => {
     console.log(error);
     setLoading(false);
-    setItemScreen6(false);
+     setItemScreen6(false);
   });
 
   }else {
     alert("Please select an item");
     setLoading(false);
-    setItemScreen6(false);
+     setItemScreen6(false);
   }
   setSelectedItem("");
   setIsItemSelected(-1);
-  setPermutations([]);
-  setLoading(false);
+
 }
 
-const submit6thItem = (e) => {
+const submit5thItem = (e) => {
   e.preventDefault();
 
   if(selectedItem !== ""){
     setLoading(true);
   let data = {
-      "selectedItem":selectedItem,
-      "basket":myBasket3,
-      "insertedId":insertedId,
-      "status":true
+    "selectedItem":selectedItem,
+    "basket":myBasket3,
+    "insertedId":insertedId,
+    "status":true
   };
+
+  setMyBasket3Items([...myBasket3Items,selectedItem]);
 
   let config = {
     method: 'post',
@@ -950,19 +918,26 @@ const submit6thItem = (e) => {
   axios.request(config)
   .then((response) => {
     console.log(JSON.stringify(response.data));
-    setLoading(false);
-    setItemScreen7(true);
     setCurrentBasket(response.data.currentBasket);
     setCurrentBasketItems(response.data.currentBasketItems);
-    setPermutations(response.data.permutations);
-    setMyBasket3Item2(selectedItem);
+    
+
+    if(response.data.permutations !== undefined){
+      setPermutations(response.data.permutations);
+      setShowItemsPermutation(true);
+    }else{
+      setPermutations([]);
+      setShowItemsPermutation(false);
+    }
+    
+
+    
+    
     //// Permutation API Call
     let data = {
       "inserted_id": insertedId,
-      "selectedPermutation":savePermutation2
+      "selectedPermutation": savePermutation2
     };
-
-        
 
     let config = {
       method: 'post',
@@ -976,93 +951,123 @@ const submit6thItem = (e) => {
     .then((response) => {
       console.log(JSON.stringify(response.data));
       setLoading(false);
-      setItemScreen7(true);
+       setItemScreen6(true);
     })
     .catch((error) => {
       console.log(error);
       setLoading(false);
-      setItemScreen7(false);
+       setItemScreen6(false);
     });
-
   })
   .catch((error) => {
     console.log(error);
     setLoading(false);
-    setItemScreen7(false);
+     setItemScreen6(false);
   });
 
   }else {
     alert("Please select an item");
     setLoading(false);
-    setItemScreen7(false);
+     setItemScreen6(false);
   }
   setSelectedItem("");
   setIsItemSelected(-1);
-  setIsItemSelected1(-1);
-  setIsPermutationSelected(-1);
-  
+
 }
 
-const finalizeItemSelection = () => {
-  setLoading(true)
+
+
+const finalizeItems = () => {
+  setItemScreen6(false);
+  setFunctionScreen1(true);
+  setLoading(true);
   let data = {
     "selectedItem":"item",
     "basket":"basket",
     "insertedId":insertedId,
     "status":false
-  }
+  };
 
-let config = {
-  method: 'post',
-  maxBodyLength: Infinity,
-  url: 'https://100061.pythonanywhere.com/item/',
-  headers: { },
-  data : data
-};
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://100061.pythonanywhere.com/item/',
+      headers: { },
+      data : data
+    };
 
-axios.request(config)
-.then((response) => {
-  console.log(JSON.stringify(response.data));
-  
-})
-.catch((error) => {
-  console.log(error);
-  setLoading(false)
-});
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
 
-setFunctionScreen1(true);
-resultFunction();
-setLoading(false);
+          /// Classification Function Call
+
+          let data = {
+            "insertedId": insertedId
+          };
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'http://100061.pythonanywhere.com/function/',
+          headers: { },
+          data : data
+        };
+
+        axios.request(config)
+        .then((response) => {
+          console.log(JSON.stringify(response.data));
+          setLoading(false);
+
+          ///// Set CF States
+
+          setCfState((prevCfState) => ({
+            ...prevCfState,
+            _id: response.data._id,
+            classificationType: response.data.classificationType,
+            numberOfLevels: response.data.numberOfLevels,
+            eventId: response.data.eventId,
+            dbInsertedId: response.data.dbInsertedId,
+            baskets: response.data.baskets,
+            basketOrder: response.data.basketOrder,
+            finalSelection: {
+              ...prevCfState.finalSelection,
+              country: response.data.finalSelection.country,
+              state: response.data.finalSelection.state,
+              city: response.data.finalSelection.city,
+            },
+            totalLength: {
+              ...prevCfState.totalLength,
+              country: response.data.totalLength.country,
+              state: response.data.totalLength.state,
+              city: response.data.totalLength.city,
+            },
+            selectedLength: {
+              ...prevCfState.selectedLength,
+              country: response.data.selectedLength.country,
+              state: response.data.selectedLength.state,
+              city: response.data.selectedLength.city,
+            },
+            probability: response.data.probability,
+            finalOutput: response.data.finalOutput,
+          }));
+
+        })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
+
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoading(false);
+    });
 
 }
 
-const resultFunction = () => {
-  setLoading(true);
-  let data = {
-    "insertedId":insertedId
-  };
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: 'https://100061.pythonanywhere.com/function/',
-    headers: { },
-    data : data
-  };
-
-  axios.request(config)
-  .then((response) => {
-    console.log(JSON.stringify(response.data));
-    setLoading(false);
-    setFinalOutput(response.data.finalOutput);
-  })
-  .catch((error) => {
-    console.log(error);
-    setLoading(false);
-  });
 
 
-}
  
 
 
@@ -1071,7 +1076,7 @@ const resultFunction = () => {
 
       <div className='relative flex justify-center items-center w-full'>
         <div className='absolute flex items-start justify-center -top-8'>
-          <h1 className='font-bold text-2xl'>Non-Hierarchical</h1>
+          {inputsData.typeOfClassification === "N" ? <h1 className='font-bold text-2xl'>Non-Hierarchical</h1> : ""}
         </div>
         <div className='absolute flex justify-center items-start right-1 -top-10 gap-1 flex-wrap z-50'>
             
@@ -1087,38 +1092,26 @@ const resultFunction = () => {
               <td>{myBasket1}</td>
             </tr>
           </tbody>
-          {myBasket1Item1 !== "" ?
-          <>
-          <thead className='border text-center mt-1'>
+          {myBasket1Items.map((item, index) => (
+            <React.Fragment key={index}>
+            <thead className='border text-center'>
             <tr>
-              <th className='font-semibold'>Item #1</th>
+              <th className='font-medium'>item #{index+1}</th>
             </tr>
           </thead>
           <tbody className='text-center'>
             <tr>
-              <td>{myBasket1Item1}</td>
+              <td>{item}</td>
             </tr>
           </tbody>
-          </>
-          : ""}
-          {myBasket1Item2 !== "" ?
-          <>
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Item #2</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket1Item2}</td>
-            </tr>
-          </tbody>
-          </>
-          : ""}
+          </React.Fragment>
+            ))}
+          
+        
           
         </table>
         :
-        ""
+        null
         }
 
         {myBasket2 !== "" ? <table className="border-2 bg-white/60 cursor-pointer">
@@ -1132,37 +1125,25 @@ const resultFunction = () => {
               <td>{myBasket2}</td>
             </tr>
           </tbody>
-          {myBasket2Item1 !== "" ?
-          <>
-          <thead className='border text-center'>
+
+          {myBasket2Items.map((item, index) => (
+            <React.Fragment key={index}>
+            <thead className='border text-center'>
             <tr>
-              <th className='font-semibold'>Item #1</th>
+              <th className='font-medium'>item #{index+1}</th>
             </tr>
           </thead>
           <tbody className='text-center'>
             <tr>
-              <td>{myBasket2Item1}</td>
+              <td>{item}</td>
             </tr>
           </tbody>
-          </>
-          : ""}
-          {myBasket2Item2 !== "" ?
-          <>
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Item #2</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket2Item2}</td>
-            </tr>
-          </tbody>
-          </>
-          : ""}
+          </React.Fragment>
+            ))}
+         
         </table>
         :
-        ""
+        null
         }
 
         {myBasket3 !== "" ? <table className="border-2 bg-white/60 cursor-pointer">
@@ -1176,238 +1157,343 @@ const resultFunction = () => {
               <td>{myBasket3}</td>
             </tr>
           </tbody>
-          {myBasket3Item1 !== "" ?
-          <>
-          <thead className='border text-center'>
+
+          {myBasket3Items.map((item, index) => (
+            <React.Fragment key={index}>
+            <thead className='border text-center'>
             <tr>
-              <th className='font-semibold'>Item #1</th>
+              <th className='font-medium'>item #{index+1}</th>
             </tr>
           </thead>
           <tbody className='text-center'>
             <tr>
-              <td>{myBasket3Item1}</td>
+              <td>{item}</td>
             </tr>
           </tbody>
-          </>
-          : ""}
-          {myBasket3Item2 !== "" ?
-          <>
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Item #2</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket3Item2}</td>
-            </tr>
-          </tbody>
-          </>
-          : ""}
+          </React.Fragment>
+            ))}
+          
         </table>
         :
-        ""
+        null
         }
             
           </div>
       </div>
 
+
       <>
-    {functionScreen1  ? 
+    {functionScreen1  ?
+      
+      <>
+      <div className='flex items-center justify-center mt-5 -mb-10'>
+      <h1 className='text-[24px] font-semibold '>Classification Function Output</h1>
+      </div>
+      <div className='flex flex-col items-center justify-center h-screen gap-1 py-5'>
+      <p><strong>_id:</strong> 
+      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState._id}</button>
+      </p>
+      <p><strong>classificationType:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.classificationType}</button></p>
+      <p><strong>numberOfLevels:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.numberOfLevels}</button></p>
+      <p><strong>eventId:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.eventId}</button></p>
+      <p><strong>dbInsertedId:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.dbInsertedId}</button></p>
+      <p><strong>baskets:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.baskets)}</button></p>
+      <p><strong>basketOrder:</strong> 
+      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.basketOrder)}</button></p>
+      <p><strong>finalSelection - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {JSON.stringify(cfState.finalSelection.country)}</button></p>
+      <p><strong>finalSelection - state:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalSelection.state)}</button></p>
+      <p><strong>finalSelection - city:</strong>
+      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalSelection.city)}</button>
+      </p>
+      <p><strong>totalLength - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.country}</button></p>
+      <p><strong>totalLength - state:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.state}</button></p>
+      <p><strong>totalLength - city:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.city}</button></p>
+      <p><strong>selectedLength - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.country}</button></p>
+      <p><strong>selectedLength - state:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.state}</button></p>
+      <p><strong>selectedLength - city:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.city}</button></p>
+      <p><strong>probability: </strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.probability}</button></p>
+      <p><strong>finalOutput:</strong>
+      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalOutput)}</button>
+      </p>
+    </div>
+      </>
+
+    
+
+     :
+      <>
+    {itemScreen6  ?
+      <>
+     {showItemsPermutation ?
       
       <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
 
     
-        <h1 className='text-[24px] font-semibold mb-5'>Result Function</h1>
 
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Items Order</h1>
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
-     {finalOutput.map((item, index) => (
-                <button onMouseUp={handleitems2}className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+     {permutations.map((item, index) => (
+                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen6(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
 
         
+        
             
     </form>
-    
-    
+      
+       :
+       
+        <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+      
 
-    :    
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 3rd Basket: {myBasket3}</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {currentBasketItems.map((item, index) => (
+                <button onMouseUp={handleitems2} onClick={submit5thItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        <div className='flex items-center justify-center mt-5'>
+        <button onClick={finalizeItems} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Finalize</button>
+        </div>
+        
+            
+    </form>}
+     </>
      
+    : 
+    
 
 
+          
       <>
-    {itemScreen7  ? 
-      
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
-
-    
-        <h1 className='text-[24px] font-semibold mb-5'>Finalize the Items Order</h1>
-
-        <div className='flex items-center justify-center gap-5 flex-wrap'>
-
-     {permutations.map((item, index) => (
-                <button onMouseUp={finalizeItemSelection} onClick={(e)=>{handlePermutation3(e);setItemScreen5A(false);setItemScreen5B(true)}} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
-            
-        </div>
-            
-    </form>
-    
-    
-
-    :    
-      
-  <>
-    {itemScreen6  ? 
-      
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
-
-    
-        <h1 className='text-[24px] font-semibold mb-5'>Select 2nd item from 3rd Basket: {currentBasket}</h1>
-
-        <div className='flex items-center justify-center gap-5 flex-wrap'>
-      
-     {currentBasketItems.map((item, index) => (
-                <button onMouseUp={handleitems2} onClick={submit6thItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
-            
-        </div>
-            
-    </form>
-    
-    :
-    <>
-    {itemScreen5B  ? 
-      
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
-
-        <h1 className='text-[24px] font-semibold mb-5'>Select 1st item from 3rd Basket: {myBasket3}</h1>
-
-        <div className='flex items-center justify-center gap-5 flex-wrap'>
-
-          {nextBasketItems.map((item, index) => (
-                <button onMouseUp={handleitems2} onClick={submit5thItem} className={parseInt(isItemSelected1) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
-            
-        </div>
-
-            
-    </form>
-
-    :
-    <>
-    {itemScreen5A  ?
-      
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
-
-        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Item Order</h1>
-
-        <div className='flex items-center justify-center gap-5 flex-wrap'>
-
-     {permutations.map((item, index) => (
-                <button onClick={(e)=>{handlePermutation3(e);setItemScreen5A(false);setItemScreen5B(true)}} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
-            
-        </div>
-            
-    </form>
-
-    :
-
+    {itemScreen5  ?
       <>
-    {itemScreen4  ? 
-
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+     
+       
+        <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
 
     
-        <h1 className='text-[24px] font-semibold mb-5'>Select 2nd item from 2nd Basket: {currentBasket}</h1>
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 3rd Basket: {myBasket3}</h1>
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
-     {currentBasketItems.map((item, index) => (
-                <button onMouseUp={handleitems1} onClick={submit4thItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
-            
-        </div>
-            
-    </form>
-    
-    
-
-    :
-    <>
-    {itemScreen3B  ? 
-      
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
-    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
-
-        <h1 className='text-[24px] font-semibold mb-5'>Select 1st item from 2nd Basket: {myBasket2}</h1>
-
-        <div className='flex items-center justify-center gap-5 flex-wrap'>
-
      {nextBasketItems.map((item, index) => (
-                <button onMouseUp={handleitems1} onClick={submit3rdItem} className={parseInt(isItemSelected1) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handleitems2} onClick={submit4thItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
 
+        
+        
             
     </form>
-
-    :
-    <>
-    {itemScreen3A  ?
+     </>
+     
+    : 
+    
+      <>
+    {itemScreen4  ?
+      <>
+     {showItemsPermutation ?
       
       <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
 
-        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Item Order</h1>
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Items Order</h1>
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
-
+      
      {permutations.map((item, index) => (
-                <button onClick={(e)=>{handlePermutation2(e);setItemScreen3A(false);setItemScreen3B(true)}} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen4(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
+
+        
+        
             
     </form>
-
-    :
-    
-    <>
-    {itemScreen2  ?
-    
-    
-      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+      
+       :
+       
+        <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
     {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
 
     
-        <h1 className='text-[24px] font-semibold mb-5'>Select 2nd item from 1st Basket: {currentBasket}</h1>
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 2nd Basket: {myBasket2}</h1>
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {currentBasketItems.map((item, index) => (
-                <button onMouseUp={handleitems} onClick={submit2ndItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handleitems1} onClick={submit3rdItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
+
+        <div className='flex items-center justify-center mt-5'>
+        <button onClick={()=>{setItemScreen5(true);setItemScreen4(false)}} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Next Basket</button>
+        </div>
+        
+            
+    </form>}
+     </>
+     
+    : 
+    
+
+
+          
+      <>
+    {itemScreen3  ?
+      <>
+     {showItemsPermutation ?
+      
+      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Items Order</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {permutations.map((item, index) => (
+                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen3(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+       
+        
             
     </form>
+      
+       :
+       
+        <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 2nd Basket: {myBasket2}</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {nextBasketItems.map((item, index) => (
+                <button onMouseUp={handleitems1} onClick={submit2ndItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        
+        
+            
+    </form>}
+     </>
+     
+    : 
     
     
 
-    :
+    
+      <>
+    {itemScreen2  ?
+      <>
+     {showItemsPermutation ?
+      
+      <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select the Permutation of Items Order</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {permutations.map((item, index) => (
+                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen2(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        
+        
+            
+    </form>
+      
+       :
+       
+        <form className='relative py-5 px-10 flex flex-col items-center justify-center h-screen w-full'>
+    {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+
+    
+
+      
+
+      
+
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 1st Basket: {currentBasket}</h1>
+
+        <div className='flex items-center justify-center gap-5 flex-wrap'>
+      
+     {currentBasketItems.map((item, index) => (
+                <button onMouseUp={handleitems} onClick={submit1stItem} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+            ))}
+            
+        </div>
+
+        <div className='flex items-center justify-center mt-5'>
+        <button onClick={()=>{setItemScreen3(true);setItemScreen2(false)}} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='button'>Next Basket</button>
+        </div>
+        
+            
+    </form>}
+     </>
+     
+    : 
     
     <>
     {itemScreen1  ?
@@ -1421,7 +1507,7 @@ const resultFunction = () => {
 
       
 
-        <h1 className='text-[24px] font-semibold mb-5'>Select 1st item from 1st Basket: {currentBasket}</h1>
+        <h1 className='text-[24px] font-semibold mb-5'>Select items from 1st Basket: {currentBasket}</h1>
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
@@ -1637,12 +1723,13 @@ const resultFunction = () => {
     </>}
     </>}
     </>}
-    </>}
-    </>}
-    </>}
     </>
+    </>
+    
+    
+    
 
-    </>
+    
   )
 
   }
