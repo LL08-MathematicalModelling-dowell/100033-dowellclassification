@@ -991,7 +991,7 @@ const finalizeItems = () => {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://100061.pythonanywhere.com/item/',
+      url: 'https://100061.pythonanywhere.com/item/',
       headers: { },
       data : data
     };
@@ -1009,7 +1009,7 @@ const finalizeItems = () => {
         let config = {
           method: 'post',
           maxBodyLength: Infinity,
-          url: 'http://100061.pythonanywhere.com/function/',
+          url: 'https://100061.pythonanywhere.com/function/',
           headers: { },
           data : data
         };
