@@ -10,7 +10,7 @@ const ClassificationType = () => {
     {showStandard ?
     <Classification /> 
     : 
-    <div className='relative py-5 px-10 flex flex-col items-center justify-center h-screen'>
+    <div className='relative py-5 px-10 flex flex-col items-center justify-center'>
 
       <h1 className='text-[26px] font-semibold mb-5'>Classification Type</h1>
      

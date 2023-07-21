@@ -2,11 +2,6 @@ import React,{useState, useEffect} from 'react';
 import axios from 'axios';
 
 const Classification = () => {
-
-
-
-
- 
  
  const [baskets,setBaskets] = useState([]);
  const [loading,setLoading] = useState(false);
@@ -27,8 +22,6 @@ const Classification = () => {
  const [selectedItem,setSelectedItem] = useState("");
  const [isItemSelected,setIsItemSelected] = useState(-1);
  const [isItemSelected1,setIsItemSelected1] = useState(-1);
- const [itemSelectedBasket,setItemSelectedBasket] = useState("");
- const [finalOutput,setFinalOutput] = useState([]);
  const [showItemsPermutation,setShowItemsPermutation] = useState(false);
 
 
@@ -36,7 +29,6 @@ const Classification = () => {
  const [classificationTypeError,setClassificationTypeError] = useState(true);
  const [dbInsertedIdError,setDbInsertedIdError] = useState(true);
  const [errorMsg,setErrorMsg] = useState(false);
-
 
 
  /// Basket Selection Screens
@@ -51,8 +43,18 @@ const Classification = () => {
  const [itemScreen4,setItemScreen4] = useState(false);
  const [itemScreen5,setItemScreen5] = useState(false);
  const [itemScreen6,setItemScreen6] = useState(false);
- const [itemScreen7,setItemScreen7] = useState(false);
  const [functionScreen1,setFunctionScreen1] = useState(false);
+
+
+ /// Permutations
+ const [permutationBasket2,setPermutationBasket2] = useState([]);
+ const [permutationItemsBasket1,setPermutationItemsBasket1] = useState([]);
+ const [permutationItemsBasket2,setPermutationItemsBasket2] = useState([]);
+ const [permutationItemsBasket3,setPermutationItemsBasket3] = useState([]);
+ const [dotBaskets,setDotBaskets] = useState([]);
+ 
+
+
 
  /// Baskets to Show
  const [myBasket1, setMyBasket1] = useState("")
@@ -114,25 +116,29 @@ const Classification = () => {
  }
 
  const handlePermutation1 = (e) => {
-  e.preventDefault();
+  const value = e.target.value;
     setSelectedPermutation(e.target.value);
     setIsPermutationSelected(e.target.name);
-    
+    setPermutationBasket2(value); 
 }
  const handlePermutation2 = (e) => {
-  e.preventDefault();
+  const value = e.target.value;
     setSelectedPermutation(e.target.value);
     setIsPermutationSelected(e.target.name);
-    // setSavePermutation([...savePermutation, e.target.value]);
+    setPermutationItemsBasket1(value);
 }
-
 const handlePermutation3 = (e) => {
-  e.preventDefault();
+  const value = e.target.value;
     setSelectedPermutation(e.target.value);
     setIsPermutationSelected(e.target.name);
-    
+    setPermutationItemsBasket2(value);
 }
-
+const handlePermutation4 = (e) => {
+  const value = e.target.value;
+    setSelectedPermutation(e.target.value);
+    setIsPermutationSelected(e.target.name);
+    setPermutationItemsBasket3(value);
+}
 
 const handleitems = (e) => {
   e.preventDefault();
@@ -293,8 +299,6 @@ const submitBasket1 = (e) => {
       setMyBasket1(selectedBasket);
       
       /// Permutation API Call
-      
-      
 
       let data = {
         "inserted_id":insertedId,
@@ -352,6 +356,7 @@ const submitBasket2 = (e) => {
   ,
       "insertedId":insertedId
   };
+  
 
     let config = {
       method: 'post',
@@ -370,37 +375,11 @@ const submitBasket2 = (e) => {
       setInsertedId(response.data.insertedId);
       setPermutations(response.data.permutations);
       setMyBasket2(selectedBasket);
-
-      /// Permutation API Call
-      
-
-      let data = {
-        "inserted_id":insertedId,
-        "selectedPermutation":savePermutation,
-        "baskets": newBaskets
-    };
-
-      
-      
-      let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://100061.pythonanywhere.com/savepermutations/',
-        headers: { },
-        data : data
-      };
-
-      axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        setLoading(false);
+      setLoading(false);
       setBasketScreen3A(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      setBasketScreen3A(false);
-      });
+      setDotBaskets(response.data.baskets);
+
+      setPermutationBasket2(permutations);
     })
     .catch((error) => {
       console.log(error);
@@ -414,15 +393,59 @@ const submitBasket2 = (e) => {
     alert("Please select the 2nd basket")
   }
    
+}
+
+
+
+const basket2Permutation = () => {
+  
+  setLoading(true);
+  /// Permutation API Call
     
-    
+
+  let data = {
+    "inserted_id":insertedId,
+    "selectedPermutation":permutationBasket2.split(","),
+    "baskets": dotBaskets
+};
+
+  
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/savepermutations/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setLoading(false);
+  setBasketScreen3B(true);
+  setBasketScreen3A(false);
+
+  const firstValue = permutationBasket2.split(",")[0];
+  const secondValue = permutationBasket2.split(",")[1];
+  setMyBasket1(firstValue);
+  setMyBasket2(secondValue);
+  
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+  setBasketScreen3B(false);
+  setBasketScreen3A(true);
+  });
+
 }
 
 
 const submitBasket3 = (e) => {
   e.preventDefault();
   
-    
+  setPermutationBasket2([]);
 
     if(selectedBasket !== ""){
       const newBaskets = [...baskets];
@@ -453,38 +476,12 @@ const submitBasket3 = (e) => {
         setInsertedId(response.data.insertedId);
         setPermutations(response.data.permutations);
         setMyBasket3(selectedBasket);
-
-
-        /// Permutation API Call
-      
-
-      let data = {
-        "inserted_id":insertedId,
-        "selectedPermutation":savePermutation,
-        "baskets": newBaskets
-    };
-
-      
-      
-      let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://100061.pythonanywhere.com/savepermutations/',
-        headers: { },
-        data : data
-      };
-
-      axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
+        setDotBaskets(response.data.baskets);
+        setPermutationBasket2(permutations);
         setLoading(false);
-      setBasketScreen4(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      setBasketScreen4(false);
-      });
+        setBasketScreen4(true);
+
+        
       })
       .catch((error) => {
         console.log(error);
@@ -508,11 +505,54 @@ const submitBasket3 = (e) => {
     setIsPermutationSelected(-1);
     setIsSelected(-1);
 }
+
+ const basket3Permutation = () => {
+  setLoading(true);
+  /// Permutation API Call
+      
+
+  let data = {
+    "inserted_id":insertedId,
+    "selectedPermutation":permutationBasket2.split(","),
+    "baskets": dotBaskets
+};
+
+  
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/savepermutations/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setLoading(false);
+  setBasketScreen4(true);
+
+  const firstValue = permutationBasket2.split(",")[0];
+  const secondValue = permutationBasket2.split(",")[1];
+  const thirdValue = permutationBasket2.split(",")[2];
+  setMyBasket1(firstValue);
+  setMyBasket2(secondValue);
+  setMyBasket3(thirdValue);
+
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+  setBasketScreen4(false);
+  });
+
+ }
      
 
   const submitFinalizingBasket = (e) => {
     e.preventDefault();
-    
+    setLoading(true);
 
     
       const newBaskets = [...baskets];
@@ -599,35 +639,8 @@ const submitBasket3 = (e) => {
         setPermutations([]);
         setShowItemsPermutation(false);
       }
-      
-
-      
-      
-      //// Permutation API Call
-      let data = {
-        "inserted_id": insertedId,
-        "selectedPermutation": savePermutation
-      };
-
-      let config = {
-        method: 'post',
-        maxBodyLength: Infinity,
-        url: 'https://100061.pythonanywhere.com/savepermutations/',
-        headers: { },
-        data : data
-      };
-
-      axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        setLoading(false);
-        setItemScreen2(true);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-        setItemScreen2(false);
-      });
+      setLoading(false);
+      setItemScreen2(true);
     })
     .catch((error) => {
       console.log(error);
@@ -642,6 +655,37 @@ const submitBasket3 = (e) => {
     }
     setSelectedItem("");
     setIsItemSelected(-1);
+
+}
+
+const basket1ItemsPermutation = () => {
+  setLoading(true);
+
+  //// Permutation API Call
+  let data = {
+    "inserted_id": insertedId,
+    "selectedPermutation": permutationItemsBasket1.split(",")
+  };
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/savepermutations/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setMyBasket1Items(permutationItemsBasket1.split(","));
+    setLoading(false);
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+    setItemScreen2(false);
+  });
 
 }
 
@@ -764,35 +808,10 @@ const submit3rdItem = (e) => {
       setPermutations([]);
       setShowItemsPermutation(false);
     }
-    
 
+    setLoading(false);
+    setItemScreen4(true);
     
-    
-    //// Permutation API Call
-    let data = {
-      "inserted_id": insertedId,
-      "selectedPermutation": savePermutation1
-    };
-
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://100061.pythonanywhere.com/savepermutations/',
-      headers: { },
-      data : data
-    };
-
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      setLoading(false);
-       setItemScreen4(true);
-    })
-    .catch((error) => {
-      console.log(error);
-      setLoading(false);
-       setItemScreen4(false);
-    });
   })
   .catch((error) => {
     console.log(error);
@@ -810,7 +829,38 @@ const submit3rdItem = (e) => {
 
 }
 
+const basket2ItemsPermutation = () => {
+  setLoading(true)
 
+  //// Permutation API Call
+  let data = {
+    "inserted_id": insertedId,
+    "selectedPermutation": permutationItemsBasket2.split(",")
+  };
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/savepermutations/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setMyBasket2Items(permutationItemsBasket2.split(","));
+    setLoading(false);
+     setItemScreen4(true);
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+     setItemScreen4(false);
+  });
+
+
+}
 
 
 const submit4thItem = (e) => {
@@ -929,35 +979,11 @@ const submit5thItem = (e) => {
       setPermutations([]);
       setShowItemsPermutation(false);
     }
-    
+    setLoading(false);
 
     
     
-    //// Permutation API Call
-    let data = {
-      "inserted_id": insertedId,
-      "selectedPermutation": savePermutation2
-    };
-
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://100061.pythonanywhere.com/savepermutations/',
-      headers: { },
-      data : data
-    };
-
-    axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      setLoading(false);
-       setItemScreen6(true);
-    })
-    .catch((error) => {
-      console.log(error);
-      setLoading(false);
-       setItemScreen6(false);
-    });
+    
   })
   .catch((error) => {
     console.log(error);
@@ -975,11 +1001,43 @@ const submit5thItem = (e) => {
 
 }
 
+const basket3ItemsPermutation = () => {
+
+  setLoading(true);
+
+  //// Permutation API Call
+  let data = {
+    "inserted_id": insertedId,
+    "selectedPermutation": permutationItemsBasket3.split(",")
+  };
+
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://100061.pythonanywhere.com/savepermutations/',
+    headers: { },
+    data : data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    setLoading(false);
+    setMyBasket3Items(permutationItemsBasket3.split(","));
+     setItemScreen6(true);
+  })
+  .catch((error) => {
+    console.log(error);
+    setLoading(false);
+     setItemScreen6(false);
+  });
+
+}
+
 
 
 const finalizeItems = () => {
-  setItemScreen6(false);
-  setFunctionScreen1(true);
+  
   setLoading(true);
   let data = {
     "selectedItem":"item",
@@ -1051,6 +1109,9 @@ const finalizeItems = () => {
             probability: response.data.probability,
             finalOutput: response.data.finalOutput,
           }));
+
+          setItemScreen6(false);
+          setFunctionScreen1(true);
 
         })
         .catch((error) => {
@@ -1185,38 +1246,95 @@ const finalizeItems = () => {
       <>
     {functionScreen1  ?
       
-      <>
-      <div className='flex items-center justify-center mt-5 -mb-10'>
+      <div className='flex flex-col items-center justify-center'>
+      <div className='flex items-center justify-center'>
       <h1 className='text-[24px] font-semibold '>Classification Function Output</h1>
       </div>
-      <div className='flex flex-col items-center justify-center h-screen gap-1 py-5'>
-      <p><strong>_id:</strong> 
-      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState._id}</button>
-      </p>
-      <p><strong>classificationType:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.classificationType}</button></p>
-      <p><strong>numberOfLevels:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.numberOfLevels}</button></p>
-      <p><strong>eventId:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.eventId}</button></p>
-      <p><strong>dbInsertedId:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.dbInsertedId}</button></p>
-      <p><strong>baskets:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.baskets)}</button></p>
-      <p><strong>basketOrder:</strong> 
-      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.basketOrder)}</button></p>
-      <p><strong>finalSelection - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {JSON.stringify(cfState.finalSelection.country)}</button></p>
-      <p><strong>finalSelection - state:</strong> <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalSelection.state)}</button></p>
-      <p><strong>finalSelection - city:</strong>
-      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalSelection.city)}</button>
-      </p>
-      <p><strong>totalLength - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.country}</button></p>
-      <p><strong>totalLength - state:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.state}</button></p>
-      <p><strong>totalLength - city:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.totalLength.city}</button></p>
-      <p><strong>selectedLength - country:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.country}</button></p>
-      <p><strong>selectedLength - state:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.state}</button></p>
-      <p><strong>selectedLength - city:</strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'> {cfState.selectedLength.city}</button></p>
-      <p><strong>probability: </strong><button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{cfState.probability}</button></p>
-      <p><strong>finalOutput:</strong>
-      <button  className='bg-purple-500 cursor-pointer text-white font-semibold  px-1 rounded hover:bg-purple-700 ml-1' type='button'>{JSON.stringify(cfState.finalOutput)}</button>
-      </p>
-    </div>
-      </>
+      <div>
+      <table class="table-auto border-2 text-center bg-white/60">
+        <thead className='border-2'>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <th className='border-2'>Keys</th>
+            <th className='border-2'>Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>_id:</td>
+            <td className='border-2'>{cfState._id}</td>
+          </tr> */}
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>classificationType:</td>
+            <td className='border-2'>{cfState.classificationType}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>numberOfLevels:</td>
+            <td className='border-2'>{cfState.numberOfLevels}</td>
+          </tr>
+          {/* <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>eventId:</td>
+            <td className='border-2'>{cfState.eventId}</td>
+          </tr> */}
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>dbInsertedId:</td>
+            <td className='border-2'>{cfState.dbInsertedId}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>baskets:</td>
+            <td className='border-2'>{JSON.stringify(cfState.baskets)}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>basketOrder:</td>
+            <td className='border-2'>{JSON.stringify(cfState.basketOrder)}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>finalSelection - country:</td>
+            <td className='border-2'>{JSON.stringify(cfState.finalSelection.country)}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>finalSelection - state:</td>
+            <td className='border-2'>{JSON.stringify(cfState.finalSelection.state)}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>finalSelection - city:</td>
+            <td className='border-2'>{JSON.stringify(cfState.finalSelection.city)}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>totalLength - country:</td>
+            <td className='border-2'>{cfState.totalLength.country}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>totalLength - state:</td>
+            <td className='border-2'>{cfState.totalLength.state}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>totalLength - city:</td>
+            <td className='border-2'>{cfState.totalLength.city}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>selectedLength - country:</td>
+            <td className='border-2'>{cfState.selectedLength.country}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>selectedLength - state:</td>
+            <td className='border-2'>{cfState.selectedLength.state}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>selectedLength - city:</td>
+            <td className='border-2'>{cfState.selectedLength.city}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>probability:</td>
+            <td className='border-2'>{cfState.probability}</td>
+          </tr>
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2'>finalOutput:</td>
+            <td className='border-2'>{JSON.stringify(cfState.finalOutput)}</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      </div>
 
     
 
@@ -1240,7 +1358,7 @@ const finalizeItems = () => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {permutations.map((item, index) => (
-                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen6(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handlePermutation4} onClick={(e)=>{basket3ItemsPermutation(e);setShowItemsPermutation(false);setItemScreen6(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -1330,7 +1448,7 @@ const finalizeItems = () => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {permutations.map((item, index) => (
-                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen4(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handlePermutation3} onClick={(e)=>{basket2ItemsPermutation(e);setShowItemsPermutation(false);setItemScreen4(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -1454,7 +1572,7 @@ const finalizeItems = () => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {permutations.map((item, index) => (
-                <button onMouseUp={handlePermutation2} onClick={()=>{setShowItemsPermutation(false);setItemScreen2(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={handlePermutation2} onClick={(e)=>{basket1ItemsPermutation(e);setShowItemsPermutation(false);setItemScreen2(true)}} className={parseInt(isItemSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -1542,7 +1660,9 @@ const finalizeItems = () => {
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
      {permutations.map((item, index) => (
-                <button onMouseUp={handlePermutation1} onClick={submitFinalizingBasket} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
+                <button onMouseUp={(e) => handlePermutation1(e)}
+                  onClick={(e)=>{basket3Permutation(e);submitFinalizingBasket(e)}}
+                 className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
             ))}
             
         </div>
@@ -1592,9 +1712,19 @@ const finalizeItems = () => {
 
         <div className='flex items-center justify-center gap-5 flex-wrap'>
       
-     {permutations.map((item, index) => (
-                <button onClick={(e)=>{handlePermutation1(e);setBasketScreen3A(false);setBasketScreen3B(true)}} className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'} name={index} value={item} type='button' key={index}>{JSON.stringify(item)}</button>
-            ))}
+        {permutations.map((item, index) => (
+  <button
+    onMouseUp={(e) => handlePermutation1(e)}
+    onClick={basket2Permutation}
+    className={parseInt(isPermutationSelected) === index ? 'bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-500' : 'bg-purple-500 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-700'}
+    name={index}
+    value={item}
+    type='button'
+    key={index}
+  >
+    {JSON.stringify(item)}
+  </button>
+))}
             
         </div>
 

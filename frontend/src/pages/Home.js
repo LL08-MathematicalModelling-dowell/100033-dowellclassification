@@ -401,8 +401,8 @@ axios(config)
 
 
   return (
-    <>
-    {showClassification ? <ClassificationType /> : <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center w-full h-fit'>
+    <div className='w-full'>
+    {showClassification ? <ClassificationType /> : <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center w-full'>
         
 
         {next && <button onClick={handleNext} className='absolute bg-purple-700 cursor-pointer text-white font-semibold py-2 px-6 rounded-l hover:bg-purple-600 right-0' type='button'>Next</button>}
@@ -1207,7 +1207,7 @@ axios(config)
             
         
     </form>}
-    </>
+    </div>
   )
 }
 
