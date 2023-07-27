@@ -11,7 +11,7 @@ function App() {
 
   return (
     <>
-    <div className='bg-purple-300 w-full h-screen overflow-y-hidden'>
+    <div className='bg-purple-300 w-full h-auto'>
       {showHome && <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-2 rounded-r hover:bg-purple-600' type='button' onClick={()=>{setShowHome(false);setIsDbId(true)}}>Back</button>}
 
       {showClassification && <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-2 rounded-r hover:bg-purple-600' type='button' onClick={()=>{setShowClassification(false);setIsDbId(true)}}>Back</button>}

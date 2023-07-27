@@ -41,7 +41,7 @@ const Home = () => {
     const [showClassification,setShowClassification] = useState(false);
 
     const handleCopy = () => {
-        const copyText = dbInsertedId;
+        const copyText = JSON.parse(dbInsertedId);
         navigator.clipboard.writeText(copyText);
         setCopied(true);
         setTimeout(() => {
@@ -401,11 +401,11 @@ axios(config)
 
 
   return (
-    <div className='w-full'>
+    <div className='w-full h-auto'>
     {showClassification ? <ClassificationType /> : <form onSubmit={handleSubmit} className='relative py-5 px-10 flex flex-col items-center justify-center w-full'>
         
 
-        {next && <button onClick={handleNext} className='absolute bg-purple-700 cursor-pointer text-white font-semibold py-2 px-6 rounded-l hover:bg-purple-600 right-0' type='button'>Next</button>}
+        
 
 
         {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
@@ -473,7 +473,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
+                    <input name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
                 </div>
                 <div>
                     
@@ -529,7 +529,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
+                    <input name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -578,7 +578,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -631,7 +631,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
+                    <input name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -679,7 +679,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -727,7 +727,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -779,7 +779,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
+                    <input name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -827,7 +827,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -876,7 +876,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -925,7 +925,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket4} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket4} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -977,7 +977,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
+                    <input name={`link-${i+1}`} onChange={handleInputsBasket1} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -1025,7 +1025,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket2} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -1073,7 +1073,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket3} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -1121,7 +1121,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket4} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket4} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -1170,7 +1170,7 @@ axios(config)
                 </div>
                 <div className='flex items-center justify-center  space-x-2'>
                     <h4>Item Link: </h4>
-                    <input required name={`link-${i+1}`} onChange={handleInputsBasket5} className='outline-none' type='text' />
+                    <input  name={`link-${i+1}`} onChange={handleInputsBasket5} className='outline-none' type='text' />
                 </div>
             </div>
 
@@ -1190,13 +1190,19 @@ axios(config)
         </div>
       ) : null}
 
+      {next ? 
+      <div className='flex items-center justify-around w-[90%] py-4 animate-pulse'>
+            <button onClick={handleNext} className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-6 rounded hover:bg-purple-600' type='button'>Next</button>
+            
 
+        </div>
+      : 
         <div className='flex items-center justify-around w-[90%] py-4'>
             <button className='bg-purple-700 cursor-pointer text-white font-semibold py-2 px-5 rounded hover:bg-purple-600' type='submit'>Submit</button>
             
 
         </div>
-           
+       }
            
 
 
@@ -1206,7 +1212,8 @@ axios(config)
         
             
         
-    </form>}
+    </form>
+    }
     </div>
   )
 }

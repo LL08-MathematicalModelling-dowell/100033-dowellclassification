@@ -6,7 +6,7 @@ const ClassificationType = () => {
     const [showStandard,setShowStandard] = useState(false);
 
   return (
-    <>
+    <div className='w-full h-auto'>
     {showStandard ?
     <Classification /> 
     : 
@@ -23,7 +23,7 @@ const ClassificationType = () => {
         </div>
            
     </div>}
-</>
+</div>
   )
 }
 
