@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
 import axios from 'axios';
+import Classification from './Classification'
 
 const Hierarchical = (props) => {
 
@@ -92,22 +93,15 @@ const Hierarchical = (props) => {
  const [myBasket2Items, setMyBasket2Items] = useState([])
  const [myBasket3Items, setMyBasket3Items] = useState([])
 
- /// checking 
-
  
 
-//  useEffect(() => {
+    const [dbInsertedId,setDbInsertedId] = useState("");
+    const [showDbInsertId,setShowDbInsertId] = useState(false);
+    const [copied,setCopied] = useState(false);
+    const [showClassification,setShowClassification] = useState(false);
  
-    
-//       setInputsData(data);
-//       setBaskets(data1);
-//       setInsertedId(data2);
-//       setItems(data3);
-//       setMyBasket1(data4);
-//       setShowH(data5);
-     
 
-// }, [data]);
+
 
 
 
@@ -513,7 +507,7 @@ const submitBasket3 = (e) => {
       setLoading(true);
       let data = {
       "selectedBasket":"basket",
-      "baskets": "baskets"
+      "baskets": [""]
       ,
       "insertedId":insertedId
        };
@@ -532,10 +526,11 @@ const submitBasket3 = (e) => {
       .then((response) => {
        console.log(JSON.stringify(response.data));
        setInsertedId(response.data.insertedId);
+       setDbInsertedId(response.data.insertedId);
        setCurrentBasket(response.data.basket);
         setItems(response.data.items);
         setLoading(false);
-        setInitialScreen(true);
+        setShowDbInsertId(true);
         setScreen4(false);
       })
       .catch((error) => {
@@ -1140,200 +1135,166 @@ const handleSubmit = (e) => {
     
 }
 
+const handleCopy = () => {
+  const copyText = dbInsertedId;
+  navigator.clipboard.writeText(copyText);
+  setCopied(true);
+  setTimeout(() => {
+      setCopied(false);
+  },500);
+  setTimeout(() => {
+      setShowDbInsertId(false);
+      setShowClassification(true);
+      setInputsData(prevState => ({
+        ...prevState,
+        typeOfClassification: dbInsertedId
+      }));
+
+  },1000);
+}
+
 
 
  
 
 
   return (
+    <div className='relative w-full'>
+    {showClassification ? <Classification />
+    :
+     <>
+
     <>
 
       <div className='relative flex justify-center items-center w-full'>
-        <div className='absolute flex items-start justify-center -top-8'>
+        <div className='absolute flex items-start justify-center -top-8 pr-16'>
            <h1 className='font-bold text-2xl'>Hierarchical</h1>
         </div>
         <div className='absolute flex justify-center items-start right-1 -top-10 gap-1 flex-wrap z-50'>
             
 
-        {myBasket1 !== "" ? <table className="border-2 bg-white/60 cursor-pointer">
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Basket #1</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket1}</td>
-            </tr>
-          </tbody>
+        {myBasket1 !== "" ? 
+
+          <div className='flex flex-col items-center justify-center'>
+
+          <div className='flex flex-col relative items-center justify-center border border-black w-24 h-11 cursor-pointer bg-white/80 hover:bg-white'>
+          <div className='w-full h-full text-center mt-4 font-semibold '>{myBasket1}</div>
+          <div className='bg-slate-600 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>Basket #1</div>
+          </div>
           {myBasket1Items.map((item, index) => (
-            <React.Fragment key={index}>
-            <thead className='border text-center'>
-            <tr>
-              <th className='font-medium'>item #{index+1}</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{item}</td>
-            </tr>
-          </tbody>
-          </React.Fragment>
+
+            <div key={index} className='flex flex-col relative items-center justify-center border border-black w-24 h-9 cursor-pointer bg-white/80 border-t-0 hover:bg-white'>
+          <div className='w-full h-full text-center mt-4 text-[12px] font-medium'>{item}</div>
+          <div className='bg-slate-500 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>item #{index+1}</div>
+          </div>
             ))}
-          
-        
-          
-        </table>
-        :
-        null
-        }
+            </div>
+         : null}
 
-        {myBasket2 !== "" ? <table className="border-2 bg-white/60 cursor-pointer">
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Basket #2</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket2}</td>
-            </tr>
-          </tbody>
+         {myBasket2 !== "" ? 
 
+          <div className='flex flex-col items-center justify-center'>
+
+          <div className='flex flex-col relative items-center justify-center border border-black w-24 h-11 cursor-pointer bg-white/80 hover:bg-white'>
+          <div className='w-full h-full text-center mt-4 font-semibold'>{myBasket2}</div>
+          <div className='bg-slate-600 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>Basket #2</div>
+          </div>
           {myBasket2Items.map((item, index) => (
-            <React.Fragment key={index}>
-            <thead className='border text-center'>
-            <tr>
-              <th className='font-medium'>item #{index+1}</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{item}</td>
-            </tr>
-          </tbody>
-          </React.Fragment>
-            ))}
-         
-        </table>
-        :
-        null
-        }
 
-        {myBasket3 !== "" ? <table className="border-2 bg-white/60 cursor-pointer">
-          <thead className='border text-center'>
-            <tr>
-              <th className='font-semibold'>Basket #3</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{myBasket3}</td>
-            </tr>
-          </tbody>
-
-          {myBasket3Items.map((item, index) => (
-            <React.Fragment key={index}>
-            <thead className='border text-center'>
-            <tr>
-              <th className='font-medium'>item #{index+1}</th>
-            </tr>
-          </thead>
-          <tbody className='text-center'>
-            <tr>
-              <td>{item}</td>
-            </tr>
-          </tbody>
-          </React.Fragment>
+            <div key={index} className='flex flex-col relative items-center justify-center border border-black w-24 h-9 cursor-pointer bg-white/80 border-t-0 hover:bg-white'>
+          <div className='w-full h-full text-center mt-4 text-[12px] font-medium '>{item}</div>
+          <div className='bg-slate-500 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>item #{index+1}</div>
+          </div>
             ))}
-          
-        </table>
-        :
-        null
-        }
+            </div>
+         : null}
+
+        
+
+         {myBasket3 !== "" ? 
+
+<div className='flex flex-col items-center justify-center'>
+
+<div className='flex flex-col relative items-center justify-center border border-black w-24 h-11 cursor-pointer bg-white/80 hover:bg-white'>
+<div className='w-full h-full text-center mt-4 font-semibold'>{myBasket3}</div>
+<div className='bg-slate-600 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>Basket #3</div>
+</div>
+{myBasket3Items.map((item, index) => (
+
+  <div key={index} className='flex flex-col relative items-center justify-center border border-black w-24 h-9 cursor-pointer bg-white/80 border-t-0 hover:bg-white'>
+<div className='w-full h-full text-center mt-4 text-[12px] font-medium'>{item}</div>
+<div className='bg-slate-500 absolute top-0 text-[10px] h-4 w-full text-center font-semibold text-white'>item #{index+1}</div>
+</div>
+  ))}
+  </div>
+: null}
             
           </div>
       </div>
 
 
-      <>
+       
+      
+        {showDbInsertId && <div className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px] h-16 '>
+        {loading && <img className='absolute left-0 right-0 top-0 bottom-0 [margin:auto] z-10 w-[300px]' src='loader1.gif' alt='loader' />}
+            <div className='relative bg-slate-800 w-[300px] h-16 rounded flex items-center justify-start mt-20'>
+                <div className='text-white text-[12px] px-1'>dbInsertedId: <span className='text-orange-400 font-semibold'>{dbInsertedId}</span></div>
+                {copied && <p className='text-[12px] font-bold py-1 px-2 absolute z-30 right-[50%] bg-slate-100 rounded mt-20 '>Copied!</p>}
+            </div>
+            
+            <div onClick={handleCopy} className='absolute right-0 top-20 rounded-r z-10 w-[50px] h-16 bg-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-200'>
+                <div className='relative'>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5C2 9.77614 2.22386 10 2.5 10H3V11H2.5C1.67157 11 1 10.3284 1 9.5V2.5C1 1.67157 1.67157 1 2.5 1H9.5C10.3284 1 11 1.67157 11 2.5V3H10V2.5C10 2.22386 9.77614 2 9.5 2H2.5C2.22386 2 2 2.22386 2 2.5V9.5Z" fill="#6B6B6B"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.5 5C5.67157 5 5 5.67157 5 6.5V13.5C5 14.3284 5.67157 15 6.5 15H13.5C14.3284 15 15 14.3284 15 13.5V6.5C15 5.67157 14.3284 5 13.5 5H6.5ZM6 6.5C6 6.22386 6.22386 6 6.5 6H13.5C13.7761 6 14 6.22386 14 6.5V13.5C14 13.7761 13.7761 14 13.5 14H6.5C6.22386 14 6 13.7761 6 13.5V6.5Z" fill="#6B6B6B"></path>
+                    </svg>
+                    
+                </div>
+                
+            </div>
+            
+        </div>}
+      
+
+
+      <div className='mt-10 pr-16'>
     {functionScreen1  ?
       
-      <div className='flex flex-col items-center justify-center'>
-      <div className='flex items-center justify-center -mt-16'>
+      <div className='flex flex-col items-center justify-center mt-10'>
+      <div className='flex items-center justify-center '>
       <h1 className='text-[24px] font-semibold '>Classification Function Output</h1>
       </div>
       <div>
-      <table className="table-auto border-2 text-center bg-white/60">
-        <thead className='border-2'>
+      <table className="table-auto border-2 border-separate border-black text-center bg-white/60">
+        <thead className='border-2 border-black'>
           <tr className='hover:bg-white/90 cursor-pointer'>
-            <th className='border-2'>Keys</th>
-            <th className='border-2'>Values</th>
+            <th className='border-2  border-black'>Keys</th>
+            <th className='border-2  border-black'>Values</th>
           </tr>
         </thead>
         <tbody>
           
           <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>classificationType:</td>
-            <td className='border-2'>{cfState.classificationType}</td>
+            <td className='border-2  border-black'>classificationType:</td>
+            <td className='border-2  border-black'>{cfState.classificationType}</td>
           </tr>
           <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>numberOfLevels:</td>
-            <td className='border-2'>{cfState.numberOfLevels}</td>
+            <td className='border-2  border-black'>numberOfLevels:</td>
+            <td className='border-2  border-black'>{cfState.numberOfLevels}</td>
+          </tr>
+          
+          
+          
+          <tr className='hover:bg-white/90 cursor-pointer'>
+            <td className='border-2  border-black'>basketOrder:</td>
+            <td className='border-2  border-black'>{JSON.stringify(cfState.basketOrder)}</td>
           </tr>
           
           <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>dbInsertedId:</td>
-            <td className='border-2'>{cfState.dbInsertedId}</td>
-          </tr>
-          
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>basketOrder:</td>
-            <td className='border-2'>{JSON.stringify(cfState.basketOrder)}</td>
+            <td className='border-2  border-black'>probability:</td>
+            <td className='border-2  border-black'>{cfState.probability}</td>
           </tr>
           <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>finalSelection - country:</td>
-            <td className='border-2'>{JSON.stringify(cfState.finalSelection.country)}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>finalSelection - state:</td>
-            <td className='border-2'>{JSON.stringify(cfState.finalSelection.state)}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>finalSelection - city:</td>
-            <td className='border-2'>{JSON.stringify(cfState.finalSelection.city)}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>totalLength - country:</td>
-            <td className='border-2'>{cfState.totalLength.country}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>totalLength - state:</td>
-            <td className='border-2'>{cfState.totalLength.state}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>totalLength - city:</td>
-            <td className='border-2'>{cfState.totalLength.city}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>selectedLength - country:</td>
-            <td className='border-2'>{cfState.selectedLength.country}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>selectedLength - state:</td>
-            <td className='border-2'>{cfState.selectedLength.state}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>selectedLength - city:</td>
-            <td className='border-2'>{cfState.selectedLength.city}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>probability:</td>
-            <td className='border-2'>{cfState.probability}</td>
-          </tr>
-          <tr className='hover:bg-white/90 cursor-pointer'>
-            <td className='border-2'>finalOutput:</td>
-            <td className='border-2'>{JSON.stringify(cfState.finalOutput)}</td>
+            <td className='border-2  border-black'>finalOutput:</td>
+            <td className='border-2  border-black'>{JSON.stringify(cfState.finalOutput)}</td>
           </tr>
         </tbody>
       </table>
@@ -1817,6 +1778,7 @@ const handleSubmit = (e) => {
     }
     </>
   }
+
     
     
     </>}
@@ -1829,14 +1791,15 @@ const handleSubmit = (e) => {
     </>}
     </>}
     </>}
-    </>
-    </>
+    </div>
+    </> 
     
-    
+    </>    }
+    </div>
     
 
     
-  )
+  );
 
   }
 export default Hierarchical;

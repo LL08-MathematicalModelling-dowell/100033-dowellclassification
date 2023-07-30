@@ -417,7 +417,7 @@ axios(config)
             
             <div onClick={handleCopy} className='absolute right-0 top-0 rounded-r z-10 w-[50px] h-16 bg-slate-100 flex items-center justify-center cursor-pointer hover:bg-slate-200'>
                 <div className='relative'>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5C2 9.77614 2.22386 10 2.5 10H3V11H2.5C1.67157 11 1 10.3284 1 9.5V2.5C1 1.67157 1.67157 1 2.5 1H9.5C10.3284 1 11 1.67157 11 2.5V3H10V2.5C10 2.22386 9.77614 2 9.5 2H2.5C2.22386 2 2 2.22386 2 2.5V9.5Z" fill="#6B6B6B"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 5C5.67157 5 5 5.67157 5 6.5V13.5C5 14.3284 5.67157 15 6.5 15H13.5C14.3284 15 15 14.3284 15 13.5V6.5C15 5.67157 14.3284 5 13.5 5H6.5ZM6 6.5C6 6.22386 6.22386 6 6.5 6H13.5C13.7761 6 14 6.22386 14 6.5V13.5C14 13.7761 13.7761 14 13.5 14H6.5C6.22386 14 6 13.7761 6 13.5V6.5Z" fill="#6B6B6B"></path>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 9.5C2 9.77614 2.22386 10 2.5 10H3V11H2.5C1.67157 11 1 10.3284 1 9.5V2.5C1 1.67157 1.67157 1 2.5 1H9.5C10.3284 1 11 1.67157 11 2.5V3H10V2.5C10 2.22386 9.77614 2 9.5 2H2.5C2.22386 2 2 2.22386 2 2.5V9.5Z" fill="#6B6B6B"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.5 5C5.67157 5 5 5.67157 5 6.5V13.5C5 14.3284 5.67157 15 6.5 15H13.5C14.3284 15 15 14.3284 15 13.5V6.5C15 5.67157 14.3284 5 13.5 5H6.5ZM6 6.5C6 6.22386 6.22386 6 6.5 6H13.5C13.7761 6 14 6.22386 14 6.5V13.5C14 13.7761 13.7761 14 13.5 14H6.5C6.22386 14 6 13.7761 6 13.5V6.5Z" fill="#6B6B6B"></path>
                     </svg>
                     
                 </div>
@@ -428,8 +428,8 @@ axios(config)
         <h1 className='text-[24px] font-semibold mb-5'>All Baskets</h1>
         
         <div className='mb-5 flex flex-col items-center justify-center '>
-            <select className='w-[160px] h-8 outline-none' onChange={handleTotalBaskets}>
-                <option className='text-center' disabled selected hidden>Number of Baskets</option>
+            <select className='w-[160px] h-8 outline-none' defaultValue="Number of Baskets" onChange={handleTotalBaskets}>
+                <option className='text-center' disabled  hidden>Number of Baskets</option>
                 <option className='text-center' value="1">1</option>
                 <option className='text-center' value="2">2</option>
                 <option className='text-center' value="3">3</option>

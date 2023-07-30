@@ -29,8 +29,8 @@ const Classification = (props) => {
 
 
  const [inputsData,setInputsData] = useState({
-  numberOfLevels: 3,
-  typeOfClassification: "",
+  numberOfLevels: "Number of Levels",
+  typeOfClassification: "Type of Classification",
   dbInsertedId: "649bc917da081daa9f9523a0"
 });
 
@@ -46,7 +46,7 @@ const Classification = (props) => {
 
 useEffect(() => {
   // Check for number of levels error
-  if (inputsData.numberOfLevels === "") {
+  if (inputsData.numberOfLevels === "Number of Levels") {
     setNumberLevelError(true);
 
   } else {
@@ -55,7 +55,7 @@ useEffect(() => {
   }
 
   // Check for classification type error
-  if (inputsData.typeOfClassification === "") {
+  if (inputsData.typeOfClassification === "Type of Classification") {
     setClassificationTypeError(true);
 
   } else {
@@ -168,8 +168,8 @@ const handleSubmit = (e) => {
       <h1 className='text-[24px] font-semibold mb-5'>Classifications</h1>
      <div className='flex flex-col items-center justify-center gap-5'>
       <div>    
-        <select className='relative w-[220px] h-[26px] outline-none' name='numberOfLevels'  onChange={handleInputs} value={inputsData.numberOfLevels} >
-                <option className='text-center' selected hidden>Number of Levels</option>
+        <select className='relative w-[220px] h-[26px] outline-none'  name='numberOfLevels'  onChange={handleInputs} value={inputsData.numberOfLevels} >
+                <option className='text-center' hidden>Number of Levels</option>
                 <option className='text-center' value="1">1</option>
                 <option className='text-center' value="2">2</option>
                 <option className='text-center' value="3">3</option>
@@ -179,8 +179,8 @@ const handleSubmit = (e) => {
                 {numberLevelError &&<span className='absolute text-[12px] text-[red]  ml-1 mt-[2px] bg-white px-[5px] py-[2px] rounded font-semibold'>*Please select the level</span>}
             </div>
             <div>
-            <select className='relative w-[220px] h-[26px] outline-none' name='typeOfClassification'  onChange={handleInputs} value={inputsData.typeOfClassification} >
-                <option className='text-center'  selected hidden>Type of Classification</option>
+            <select className='relative w-[220px] h-[26px] outline-none' name='typeOfClassification'  onChange={handleInputs}  value={inputsData.typeOfClassification} >
+                <option className='text-center'  hidden>Type of Classification</option>
                 <option className='text-center' value="N">Non-Hierarchical</option>
                 <option className='text-center' value="H">Hierarchical</option>
                 <option className='text-center' value="T">Tree Structure</option>
