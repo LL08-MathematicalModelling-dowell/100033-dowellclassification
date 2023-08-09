@@ -203,18 +203,28 @@ const Segmentation = () => {
       setSubmit(true);
       if (parseInt(inputsData.numberOfLevels) === 1) {
         setLevel1(true);
+        setLevel2(false);
+        setLevel3(false);
+        setLevel4(false);
+        setLevel5(false);
       } else if (parseInt(inputsData.numberOfLevels) === 2) {
         setLevel1(true);
         setLevel2(true);
+        setLevel3(false);
+        setLevel4(false);
+        setLevel5(false);
       } else if (parseInt(inputsData.numberOfLevels) === 3) {
         setLevel1(true);
         setLevel2(true);
         setLevel3(true);
+        setLevel4(false);
+        setLevel5(false);
       } else if (parseInt(inputsData.numberOfLevels) === 4) {
         setLevel1(true);
         setLevel2(true);
         setLevel3(true);
         setLevel4(true);
+        setLevel5(false);
       } else if (parseInt(inputsData.numberOfLevels) === 5) {
         setLevel1(true);
         setLevel2(true);
@@ -244,6 +254,7 @@ const Segmentation = () => {
     setVsl3("Value for Segmentation L-3");
     setVsl4("Value for Segmentation L-4");
     setVsl5("Value for Segmentation L-5");
+    setSubmit(false);
   };
 
   const handleAllSubmit = () => {
@@ -374,987 +385,1004 @@ const Segmentation = () => {
             </button>
           </div>
         )}
+        {submit && (
+          <>
+            {level1 && (
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-[20px] font-semibold">Level 1</h1>
+                <div className="flex items-center justify-center gap-5 flex-wrap">
+                  <select
+                    onChange={(e) => setSegmentationLevel1(e.target.value)}
+                    value={segmentationLevel1}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      {segmentationLevel1}
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Geographic Segmentation"
+                    >
+                      Geographic Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Demographic Segmentation"
+                    >
+                      Demographic Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Behavioural Segmentation"
+                    >
+                      Behavioural Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Psychographic Segmentation"
+                    >
+                      Psychographic Segmentation
+                    </option>
+                    <option className="text-center" value="Usage Segmentation">
+                      Usage Segmentation
+                    </option>
+                  </select>
 
-        {level1 && (
-          <div className="flex flex-col items-start justify-center">
-            <h1 className="text-[20px] font-semibold">Level 1</h1>
-            <div className="flex items-center justify-center gap-5 flex-wrap">
-              <select
-                onChange={(e) => setSegmentationLevel1(e.target.value)}
-                value={segmentationLevel1}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  {segmentationLevel1}
-                </option>
-                <option className="text-center" value="Geographic Segmentation">
-                  Geographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Demographic Segmentation"
-                >
-                  Demographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Behavioural Segmentation"
-                >
-                  Behavioural Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Psychographic Segmentation"
-                >
-                  Psychographic Segmentation
-                </option>
-                <option className="text-center" value="Usage Segmentation">
-                  Usage Segmentation
-                </option>
-              </select>
+                  <select
+                    onChange={(e) => setBsl1(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Basis of Segmentation L-1
+                    </option>
+                    {segmentationLevel1 === "Geographic Segmentation" &&
+                      GeographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel1 === "Demographic Segmentation" &&
+                      DemographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel1 === "Behavioural Segmentation" &&
+                      BehaviouralList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel1 === "Psychographic Segmentation" &&
+                      PsychographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel1 === "Usage Segmentation" &&
+                      UsageList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    onChange={(e) => setVsl1(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Value for Segmentation L-1
+                    </option>
+                    {bsl1 === "Region Wise" &&
+                      regionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Income" &&
+                      incomeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Education" &&
+                      educationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Occupation" &&
+                      occupationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Family Size" &&
+                      familySizeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Age" &&
+                      ageWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Gender" &&
+                      genderWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Benefits Segmentation" &&
+                      benefitsWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Occasion Segmentation" &&
+                      occasionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Roles" &&
+                      roleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Lifestyle" &&
+                      lifestyleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Attitude" &&
+                      attitudeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Customer IQ" &&
+                      customerIqWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Personality" &&
+                      personalityWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Usage Rate" &&
+                      usageRateWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Awareness Status" &&
+                      awarenessWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Purpose" &&
+                      purposeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl1 === "Brand Loyalty" &&
+                      brandLoyaltyWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            )}
 
-              <select
-                onChange={(e) => setBsl1(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Basis of Segmentation L-1
-                </option>
-                {segmentationLevel1 === "Geographic Segmentation" &&
-                  GeographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+            {level2 && (
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-[20px] font-semibold">Level 2</h1>
+                <div className="flex items-center justify-center gap-5 flex-wrap">
+                  <select
+                    onChange={(e) => setSegmentationLevel2(e.target.value)}
+                    value={segmentationLevel2}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      {segmentationLevel2}
                     </option>
-                  ))}
-                {segmentationLevel1 === "Demographic Segmentation" &&
-                  DemographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Geographic Segmentation"
+                    >
+                      Geographic Segmentation
                     </option>
-                  ))}
-                {segmentationLevel1 === "Behavioural Segmentation" &&
-                  BehaviouralList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Demographic Segmentation"
+                    >
+                      Demographic Segmentation
                     </option>
-                  ))}
-                {segmentationLevel1 === "Psychographic Segmentation" &&
-                  PsychographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Behavioural Segmentation"
+                    >
+                      Behavioural Segmentation
                     </option>
-                  ))}
-                {segmentationLevel1 === "Usage Segmentation" &&
-                  UsageList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Psychographic Segmentation"
+                    >
+                      Psychographic Segmentation
                     </option>
-                  ))}
-              </select>
-              <select
-                onChange={(e) => setVsl1(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Value for Segmentation L-1
-                </option>
-                {bsl1 === "Region Wise" &&
-                  regionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option className="text-center" value="Usage Segmentation">
+                      Usage Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Income" &&
-                  incomeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                  </select>
+
+                  <select
+                    onChange={(e) => setBsl2(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Basis of Segmentation L-2
                     </option>
-                  ))}
-                {bsl1 === "Education" &&
-                  educationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    {segmentationLevel2 === "Geographic Segmentation" &&
+                      GeographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel2 === "Demographic Segmentation" &&
+                      DemographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel2 === "Behavioural Segmentation" &&
+                      BehaviouralList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel2 === "Psychographic Segmentation" &&
+                      PsychographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel2 === "Usage Segmentation" &&
+                      UsageList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    onChange={(e) => setVsl2(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Value for Segmentation L-2
                     </option>
-                  ))}
-                {bsl1 === "Occupation" &&
-                  occupationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    {bsl2 === "Region Wise" &&
+                      regionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Income" &&
+                      incomeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Education" &&
+                      educationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Occupation" &&
+                      occupationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Family Size" &&
+                      familySizeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Age" &&
+                      ageWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Gender" &&
+                      genderWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Benefits Segmentation" &&
+                      benefitsWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Occasion Segmentation" &&
+                      occasionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Roles" &&
+                      roleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Lifestyle" &&
+                      lifestyleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Attitude" &&
+                      attitudeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Customer IQ" &&
+                      customerIqWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Personality" &&
+                      personalityWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Usage Rate" &&
+                      usageRateWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Awareness Status" &&
+                      awarenessWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Purpose" &&
+                      purposeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl2 === "Brand Loyalty" &&
+                      brandLoyaltyWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {level3 && (
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-[20px] font-semibold">Level 3</h1>
+                <div className="flex items-center justify-center gap-5 flex-wrap">
+                  <select
+                    onChange={(e) => setSegmentationLevel3(e.target.value)}
+                    value={segmentationLevel3}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      {segmentationLevel3}
                     </option>
-                  ))}
-                {bsl1 === "Family Size" &&
-                  familySizeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Geographic Segmentation"
+                    >
+                      Geographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Age" &&
-                  ageWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Demographic Segmentation"
+                    >
+                      Demographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Gender" &&
-                  genderWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Behavioural Segmentation"
+                    >
+                      Behavioural Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Benefits Segmentation" &&
-                  benefitsWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Psychographic Segmentation"
+                    >
+                      Psychographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Occasion Segmentation" &&
-                  occasionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option className="text-center" value="Usage Segmentation">
+                      Usage Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Roles" &&
-                  roleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                  </select>
+
+                  <select
+                    onChange={(e) => setBsl3(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Basis of Segmentation L-3
                     </option>
-                  ))}
-                {bsl1 === "Lifestyle" &&
-                  lifestyleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    {segmentationLevel3 === "Geographic Segmentation" &&
+                      GeographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel3 === "Demographic Segmentation" &&
+                      DemographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel3 === "Behavioural Segmentation" &&
+                      BehaviouralList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel3 === "Psychographic Segmentation" &&
+                      PsychographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel3 === "Usage Segmentation" &&
+                      UsageList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    onChange={(e) => setVsl3(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Value for Segmentation L-3
                     </option>
-                  ))}
-                {bsl1 === "Attitude" &&
-                  attitudeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    {bsl3 === "Region Wise" &&
+                      regionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Income" &&
+                      incomeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Education" &&
+                      educationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Occupation" &&
+                      occupationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Family Size" &&
+                      familySizeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Age" &&
+                      ageWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Gender" &&
+                      genderWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Benefits Segmentation" &&
+                      benefitsWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Occasion Segmentation" &&
+                      occasionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Roles" &&
+                      roleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Lifestyle" &&
+                      lifestyleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Attitude" &&
+                      attitudeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Customer IQ" &&
+                      customerIqWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Personality" &&
+                      personalityWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Usage Rate" &&
+                      usageRateWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Awareness Status" &&
+                      awarenessWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Purpose" &&
+                      purposeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl3 === "Brand Loyalty" &&
+                      brandLoyaltyWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {level4 && (
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-[20px] font-semibold">Level 4</h1>
+                <div className="flex items-center justify-center gap-5 flex-wrap">
+                  <select
+                    onChange={(e) => setSegmentationLevel4(e.target.value)}
+                    value={segmentationLevel4}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      {segmentationLevel4}
                     </option>
-                  ))}
-                {bsl1 === "Customer IQ" &&
-                  customerIqWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Geographic Segmentation"
+                    >
+                      Geographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Personality" &&
-                  personalityWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Demographic Segmentation"
+                    >
+                      Demographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Usage Rate" &&
-                  usageRateWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Behavioural Segmentation"
+                    >
+                      Behavioural Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Awareness Status" &&
-                  awarenessWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option
+                      className="text-center"
+                      value="Psychographic Segmentation"
+                    >
+                      Psychographic Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Purpose" &&
-                  purposeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                    <option className="text-center" value="Usage Segmentation">
+                      Usage Segmentation
                     </option>
-                  ))}
-                {bsl1 === "Brand Loyalty" &&
-                  brandLoyaltyWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
+                  </select>
+
+                  <select
+                    onChange={(e) => setBsl4(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Basis of Segmentation L-4
                     </option>
-                  ))}
-              </select>
-            </div>
-          </div>
+                    {segmentationLevel4 === "Geographic Segmentation" &&
+                      GeographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel4 === "Demographic Segmentation" &&
+                      DemographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel4 === "Behavioural Segmentation" &&
+                      BehaviouralList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel4 === "Psychographic Segmentation" &&
+                      PsychographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel4 === "Usage Segmentation" &&
+                      UsageList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    onChange={(e) => setVsl4(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Value for Segmentation L-4
+                    </option>
+                    {bsl4 === "Region Wise" &&
+                      regionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Income" &&
+                      incomeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Education" &&
+                      educationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Occupation" &&
+                      occupationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Family Size" &&
+                      familySizeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Age" &&
+                      ageWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Gender" &&
+                      genderWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Benefits Segmentation" &&
+                      benefitsWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Occasion Segmentation" &&
+                      occasionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Roles" &&
+                      roleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Lifestyle" &&
+                      lifestyleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Attitude" &&
+                      attitudeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Customer IQ" &&
+                      customerIqWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Personality" &&
+                      personalityWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Usage Rate" &&
+                      usageRateWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Awareness Status" &&
+                      awarenessWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Purpose" &&
+                      purposeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl4 === "Brand Loyalty" &&
+                      brandLoyaltyWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {level5 && (
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-[20px] font-semibold">Level 5</h1>
+                <div className="flex items-center justify-center gap-5 flex-wrap">
+                  <select
+                    onChange={(e) => setSegmentationLevel5(e.target.value)}
+                    value={segmentationLevel5}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      {segmentationLevel5}
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Geographic Segmentation"
+                    >
+                      Geographic Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Demographic Segmentation"
+                    >
+                      Demographic Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Behavioural Segmentation"
+                    >
+                      Behavioural Segmentation
+                    </option>
+                    <option
+                      className="text-center"
+                      value="Psychographic Segmentation"
+                    >
+                      Psychographic Segmentation
+                    </option>
+                    <option className="text-center" value="Usage Segmentation">
+                      Usage Segmentation
+                    </option>
+                  </select>
+
+                  <select
+                    onChange={(e) => setBsl5(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Basis of Segmentation L-5
+                    </option>
+                    {segmentationLevel5 === "Geographic Segmentation" &&
+                      GeographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel5 === "Demographic Segmentation" &&
+                      DemographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel5 === "Behavioural Segmentation" &&
+                      BehaviouralList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel5 === "Psychographic Segmentation" &&
+                      PsychographicList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {segmentationLevel5 === "Usage Segmentation" &&
+                      UsageList.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                  <select
+                    onChange={(e) => setVsl5(e.target.value)}
+                    className="relative w-[220px] h-[26px] outline-none"
+                  >
+                    <option className="text-center" hidden>
+                      Value for Segmentation L-5
+                    </option>
+                    {bsl5 === "Region Wise" &&
+                      regionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Income" &&
+                      incomeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Education" &&
+                      educationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Occupation" &&
+                      occupationWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Family Size" &&
+                      familySizeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Age" &&
+                      ageWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Gender" &&
+                      genderWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Benefits Segmentation" &&
+                      benefitsWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Occasion Segmentation" &&
+                      occasionWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Roles" &&
+                      roleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Lifestyle" &&
+                      lifestyleWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Attitude" &&
+                      attitudeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Customer IQ" &&
+                      customerIqWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Personality" &&
+                      personalityWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Usage Rate" &&
+                      usageRateWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Awareness Status" &&
+                      awarenessWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Purpose" &&
+                      purposeWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    {bsl5 === "Brand Loyalty" &&
+                      brandLoyaltyWise.map((item, index) => (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            )}
+          </>
         )}
-
-        {level2 && (
-          <div className="flex flex-col items-start justify-center">
-            <h1 className="text-[20px] font-semibold">Level 2</h1>
-            <div className="flex items-center justify-center gap-5 flex-wrap">
-              <select
-                onChange={(e) => setSegmentationLevel2(e.target.value)}
-                value={segmentationLevel2}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  {segmentationLevel2}
-                </option>
-                <option className="text-center" value="Geographic Segmentation">
-                  Geographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Demographic Segmentation"
-                >
-                  Demographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Behavioural Segmentation"
-                >
-                  Behavioural Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Psychographic Segmentation"
-                >
-                  Psychographic Segmentation
-                </option>
-                <option className="text-center" value="Usage Segmentation">
-                  Usage Segmentation
-                </option>
-              </select>
-
-              <select
-                onChange={(e) => setBsl2(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Basis of Segmentation L-2
-                </option>
-                {segmentationLevel2 === "Geographic Segmentation" &&
-                  GeographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel2 === "Demographic Segmentation" &&
-                  DemographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel2 === "Behavioural Segmentation" &&
-                  BehaviouralList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel2 === "Psychographic Segmentation" &&
-                  PsychographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel2 === "Usage Segmentation" &&
-                  UsageList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-              <select
-                onChange={(e) => setVsl2(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Value for Segmentation L-2
-                </option>
-                {bsl2 === "Region Wise" &&
-                  regionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Income" &&
-                  incomeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Education" &&
-                  educationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Occupation" &&
-                  occupationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Family Size" &&
-                  familySizeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Age" &&
-                  ageWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Gender" &&
-                  genderWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Benefits Segmentation" &&
-                  benefitsWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Occasion Segmentation" &&
-                  occasionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Roles" &&
-                  roleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Lifestyle" &&
-                  lifestyleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Attitude" &&
-                  attitudeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Customer IQ" &&
-                  customerIqWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Personality" &&
-                  personalityWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Usage Rate" &&
-                  usageRateWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Awareness Status" &&
-                  awarenessWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Purpose" &&
-                  purposeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl2 === "Brand Loyalty" &&
-                  brandLoyaltyWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        {level3 && (
-          <div className="flex flex-col items-start justify-center">
-            <h1 className="text-[20px] font-semibold">Level 3</h1>
-            <div className="flex items-center justify-center gap-5 flex-wrap">
-              <select
-                onChange={(e) => setSegmentationLevel3(e.target.value)}
-                value={segmentationLevel3}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  {segmentationLevel3}
-                </option>
-                <option className="text-center" value="Geographic Segmentation">
-                  Geographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Demographic Segmentation"
-                >
-                  Demographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Behavioural Segmentation"
-                >
-                  Behavioural Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Psychographic Segmentation"
-                >
-                  Psychographic Segmentation
-                </option>
-                <option className="text-center" value="Usage Segmentation">
-                  Usage Segmentation
-                </option>
-              </select>
-
-              <select
-                onChange={(e) => setBsl3(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Basis of Segmentation L-3
-                </option>
-                {segmentationLevel3 === "Geographic Segmentation" &&
-                  GeographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel3 === "Demographic Segmentation" &&
-                  DemographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel3 === "Behavioural Segmentation" &&
-                  BehaviouralList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel3 === "Psychographic Segmentation" &&
-                  PsychographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel3 === "Usage Segmentation" &&
-                  UsageList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-              <select
-                onChange={(e) => setVsl3(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Value for Segmentation L-3
-                </option>
-                {bsl3 === "Region Wise" &&
-                  regionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Income" &&
-                  incomeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Education" &&
-                  educationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Occupation" &&
-                  occupationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Family Size" &&
-                  familySizeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Age" &&
-                  ageWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Gender" &&
-                  genderWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Benefits Segmentation" &&
-                  benefitsWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Occasion Segmentation" &&
-                  occasionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Roles" &&
-                  roleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Lifestyle" &&
-                  lifestyleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Attitude" &&
-                  attitudeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Customer IQ" &&
-                  customerIqWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Personality" &&
-                  personalityWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Usage Rate" &&
-                  usageRateWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Awareness Status" &&
-                  awarenessWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Purpose" &&
-                  purposeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl3 === "Brand Loyalty" &&
-                  brandLoyaltyWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        {level4 && (
-          <div className="flex flex-col items-start justify-center">
-            <h1 className="text-[20px] font-semibold">Level 4</h1>
-            <div className="flex items-center justify-center gap-5 flex-wrap">
-              <select
-                onChange={(e) => setSegmentationLevel4(e.target.value)}
-                value={segmentationLevel4}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  {segmentationLevel4}
-                </option>
-                <option className="text-center" value="Geographic Segmentation">
-                  Geographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Demographic Segmentation"
-                >
-                  Demographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Behavioural Segmentation"
-                >
-                  Behavioural Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Psychographic Segmentation"
-                >
-                  Psychographic Segmentation
-                </option>
-                <option className="text-center" value="Usage Segmentation">
-                  Usage Segmentation
-                </option>
-              </select>
-
-              <select
-                onChange={(e) => setBsl4(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Basis of Segmentation L-4
-                </option>
-                {segmentationLevel4 === "Geographic Segmentation" &&
-                  GeographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel4 === "Demographic Segmentation" &&
-                  DemographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel4 === "Behavioural Segmentation" &&
-                  BehaviouralList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel4 === "Psychographic Segmentation" &&
-                  PsychographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel4 === "Usage Segmentation" &&
-                  UsageList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-              <select
-                onChange={(e) => setVsl4(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Value for Segmentation L-4
-                </option>
-                {bsl4 === "Region Wise" &&
-                  regionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Income" &&
-                  incomeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Education" &&
-                  educationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Occupation" &&
-                  occupationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Family Size" &&
-                  familySizeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Age" &&
-                  ageWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Gender" &&
-                  genderWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Benefits Segmentation" &&
-                  benefitsWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Occasion Segmentation" &&
-                  occasionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Roles" &&
-                  roleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Lifestyle" &&
-                  lifestyleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Attitude" &&
-                  attitudeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Customer IQ" &&
-                  customerIqWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Personality" &&
-                  personalityWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Usage Rate" &&
-                  usageRateWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Awareness Status" &&
-                  awarenessWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Purpose" &&
-                  purposeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl4 === "Brand Loyalty" &&
-                  brandLoyaltyWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        {level5 && (
-          <div className="flex flex-col items-start justify-center">
-            <h1 className="text-[20px] font-semibold">Level 5</h1>
-            <div className="flex items-center justify-center gap-5 flex-wrap">
-              <select
-                onChange={(e) => setSegmentationLevel5(e.target.value)}
-                value={segmentationLevel5}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  {segmentationLevel5}
-                </option>
-                <option className="text-center" value="Geographic Segmentation">
-                  Geographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Demographic Segmentation"
-                >
-                  Demographic Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Behavioural Segmentation"
-                >
-                  Behavioural Segmentation
-                </option>
-                <option
-                  className="text-center"
-                  value="Psychographic Segmentation"
-                >
-                  Psychographic Segmentation
-                </option>
-                <option className="text-center" value="Usage Segmentation">
-                  Usage Segmentation
-                </option>
-              </select>
-
-              <select
-                onChange={(e) => setBsl5(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Basis of Segmentation L-5
-                </option>
-                {segmentationLevel5 === "Geographic Segmentation" &&
-                  GeographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel5 === "Demographic Segmentation" &&
-                  DemographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel5 === "Behavioural Segmentation" &&
-                  BehaviouralList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel5 === "Psychographic Segmentation" &&
-                  PsychographicList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {segmentationLevel5 === "Usage Segmentation" &&
-                  UsageList.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-              <select
-                onChange={(e) => setVsl5(e.target.value)}
-                className="relative w-[220px] h-[26px] outline-none"
-              >
-                <option className="text-center" hidden>
-                  Value for Segmentation L-5
-                </option>
-                {bsl5 === "Region Wise" &&
-                  regionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Income" &&
-                  incomeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Education" &&
-                  educationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Occupation" &&
-                  occupationWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Family Size" &&
-                  familySizeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Age" &&
-                  ageWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Gender" &&
-                  genderWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Benefits Segmentation" &&
-                  benefitsWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Occasion Segmentation" &&
-                  occasionWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Roles" &&
-                  roleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Lifestyle" &&
-                  lifestyleWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Attitude" &&
-                  attitudeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Customer IQ" &&
-                  customerIqWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Personality" &&
-                  personalityWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Usage Rate" &&
-                  usageRateWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Awareness Status" &&
-                  awarenessWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Purpose" &&
-                  purposeWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                {bsl5 === "Brand Loyalty" &&
-                  brandLoyaltyWise.map((item, index) => (
-                    <option key={index} value={item}>
-                      {item}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-        )}
-
         {submit && (
           <div className="flex items-center justify-center w-[90%] py-5 gap-5">
             <button
